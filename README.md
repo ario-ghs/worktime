@@ -4,6 +4,12 @@ A simple time-tracking app for Android phones, in German and English. It records
 
 **Open the app:** https://ario-ghs.github.io/worktime/
 
+## Screenshots
+
+| Today | Month | Profile |
+|---|---|---|
+| <img src="screenshots/today.jpg" width="250" alt="Today screen"> | <img src="screenshots/month.jpg" width="250" alt="Monthly report"> | <img src="screenshots/profile.jpg" width="250" alt="Profile screen"> |
+
 ## Features
 
 - **Clock in / out with one tap:** clock in, start break, start lunch, back to work, finish & go home
@@ -23,6 +29,7 @@ A simple time-tracking app for Android phones, in German and English. It records
 
 ## Changelog
 
+- **v1.1:** week headers now sit above their days, "forgot to clock out?" reminder only for shifts that started earlier, wider break-plan fields, fixed avatar initials, screenshots in README
 - **v1.0:** MIT License added, unused Excel library removed, first official release
 - **New address:** repository renamed to `worktime`, app moved to https://ario-ghs.github.io/worktime/
 - **PDF sharing:** "Send to supervisor" now shares a PDF timesheet; new "Download PDF" button
@@ -61,6 +68,7 @@ All data is stored **only on your phone**. Nothing is sent to a server, and noth
 | `jspdf.umd.min.js`, `jspdf.plugin.autotable.min.js` | PDF export libraries ([jsPDF](https://github.com/parallax/jsPDF), [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable), MIT) |
 | `icon-192.png`, `icon-512.png` | App icons |
 | `logo.png` | Company logo |
+| `screenshots/` | Screenshots for this README |
 
 ## License
 
