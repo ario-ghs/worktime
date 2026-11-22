@@ -9,437 +9,614 @@
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 /* VOICE: calm, practical, a tool used every day at the door of the workplace
-   IDEA: the paper punch card by the factory gate, stamped five times a day
-   PICTURE: the live clock and five big stamp buttons, today's card under it
-   COLOUR and TYPE: stone ground, black ink, brick accent; Schibsted Grotesk throughout
-   LAYOUT: one column, phone first; month table and export below */
-:root{color-scheme:light dark;--bg:light-dark(#e7e4df,#171513);--panel:light-dark(#fff,#221f1c);--ink:light-dark(#141210,#ece8e2);--mute:light-dark(#6b655d,#a39c92);--line:light-dark(#d3cec6,#3a3530);--brick:#269282;--ok:light-dark(#1f6b3a,#6cc18a);--amber:light-dark(#9a5b00,#e7a64a)}
+   IDEA: the punch card by the gate, with the employee's own file behind it
+   PICTURE: live clock and big stamp buttons; month sheet; personnel file with photo
+   COLOUR and TYPE: GST black band, stone ground, GST green accent; Schibsted Grotesk
+   LAYOUT: one phone column, bottom navigation with three views */
+:root{color-scheme:light dark;--bg:light-dark(#e7e4df,#141615);--panel:light-dark(#fff,#1f2221);--ink:light-dark(#141210,#ece8e2);--mute:light-dark(#6b655d,#a39c92);--line:light-dark(#d3cec6,#353a38);--acc:#269282;--accSoft:light-dark(#dcefeb,#1d3a35);--warn:light-dark(#9a5b00,#e7a64a);--bad:light-dark(#b3261e,#f28b82);--ok:light-dark(#1f6b3a,#6cc18a)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Schibsted Grotesk",system-ui,sans-serif;overflow-x:clip}
-.wrap{max-width:720px;margin:0 auto;padding:18px max(4vw,14px) 60px}
-h1{font-size:20px;margin:0;font-weight:800}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Schibsted Grotesk",system-ui,sans-serif;overflow-x:clip;padding-bottom:84px}
+.brand{background:#16191a;color:#fff;padding:12px max(4vw,14px);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand img.logo{height:38px;width:auto;display:block}
+.who{display:flex;align-items:center;gap:8px;background:none;border:0;color:#fff;font:inherit;cursor:pointer;padding:4px;border-radius:99px;min-height:44px}
+.av{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#269282;color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;flex:none}
+.av.big{width:96px;height:96px;font-size:32px}
+.who span{font-size:14px;max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lang{display:flex;gap:4px}.lang button{font:inherit;font-size:13px;min-height:36px;min-width:40px;border-radius:8px;border:1px solid #4a4f50;background:transparent;color:#fff;cursor:pointer}.lang button[aria-pressed=true]{background:var(--acc);border-color:var(--acc)}
+.wrap{max-width:720px;margin:0 auto;padding:6px max(4vw,14px) 30px}
 h2{font-size:20px;margin:0 0 10px;font-weight:800}
-.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.sync{font-size:13px;color:var(--mute)}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:14px}
-.clock{font-size:clamp(52px,16vw,88px);font-weight:800;line-height:1.05;letter-spacing:1px;direction:ltr;text-align:center;font-variant-numeric:tabular-nums}
+h3{font-size:16px;margin:18px 0 8px;font-weight:800}
+.sync{font-size:13px;color:var(--mute);margin:6px 0 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:12px}
+.clock{font-size:clamp(52px,16vw,84px);font-weight:800;line-height:1.05;text-align:center;font-variant-numeric:tabular-nums}
 .date{text-align:center;color:var(--mute)}
 .status{display:flex;justify-content:center;margin:10px 0 4px}
 .pill{padding:4px 14px;border-radius:99px;font-weight:600;font-size:15px;border:1px solid currentColor}
-.s-work{color:var(--ok)}.s-pause{color:var(--amber)}.s-off{color:var(--mute)}
-.btns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+.s-work{color:var(--ok)}.s-pause{color:var(--warn)}.s-off{color:var(--mute)}
+.btns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
 .btn{font:inherit;font-weight:600;font-size:17px;min-height:58px;border-radius:12px;border:2px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;padding:6px 10px}
-.btn.main{background:var(--brick);border-color:var(--brick);color:#fff}
+.btn.main{background:var(--acc);border-color:var(--acc);color:#fff}
 .btn.wide{grid-column:1/-1}
 .btn:disabled{opacity:.28;cursor:not-allowed}
-.btn:focus-visible,.small:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--brick);outline-offset:2px}
-.small{font:inherit;font-size:14px;min-height:44px;padding:6px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
-.small.danger{color:var(--brick);border-color:var(--brick)}
-.small.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.tl{list-style:none;margin:0;padding:0}
-.tl li{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line)}
-.tl li:last-child{border:0}
-.t{direction:ltr;font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
-.sum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px;text-align:center}
-.sum b{display:block;font-size:22px;direction:ltr;font-variant-numeric:tabular-nums}
-.sum span{font-size:13px;color:var(--mute)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.small{font:inherit;font-size:14px;min-height:44px;padding:6px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.small.danger{color:var(--bad);border-color:var(--bad)}
+.small.primary{background:var(--acc);color:#fff;border-color:var(--acc)}
+.small.dark{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-input,select{font:inherit;font-size:16px;min-height:44px;padding:6px 10px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
-table{width:100%;border-collapse:collapse;font-size:15px}
-th{font-size:13px;color:var(--mute);font-weight:600;text-align:start;border-bottom:2px solid var(--ink);padding:6px 4px}
-td{padding:9px 4px;border-bottom:1px solid var(--line)}
-tbody tr{cursor:pointer}tbody tr:hover{background:light-dark(#f4f1ec,#2a2622)}
-.num{direction:ltr;text-align:end;font-variant-numeric:tabular-nums;white-space:nowrap}
-tfoot td{font-weight:800;border-top:2px solid var(--ink);border-bottom:0}
-.empty{color:var(--mute);text-align:center;padding:16px 0}
+.between{justify-content:space-between}
+.alert{margin-top:10px;padding:12px 14px;border-radius:12px;font-weight:600;text-align:center}
+.alert.bad{background:var(--bad);color:#fff}.alert.info{border:2px solid var(--warn)}.alert.good{background:var(--accSoft)}
+.alert .small{margin-top:8px}
+.plan{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:12px;font-size:14px;color:var(--mute);justify-content:center}.plan .done{color:var(--ok)}.plan .now{color:var(--acc);font-weight:800}
+.total{text-align:center;margin:4px 0 12px;padding:12px;border-radius:12px;background:var(--ink);color:var(--bg)}.total b{display:block;font-size:30px;line-height:1.15}.total span{font-size:14px;opacity:.8}
+.tl{list-style:none;margin:0;padding:0}.tl li{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line)}.tl li:last-child{border:0}
+.t{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.sum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px;text-align:center}
+.sum b{display:block;font-size:20px;font-variant-numeric:tabular-nums;white-space:nowrap}.sum span{font-size:13px;color:var(--mute)}
+.warns{margin:10px 0 0;padding:0;list-style:none}.warns li{color:var(--bad);font-size:14px;padding:3px 0}.warns li::before{content:"⚠ "}
+input,select{font:inherit;font-size:16px;min-height:44px;padding:6px 10px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);width:100%}
+.f{display:grid;gap:4px;margin-bottom:10px}.f label,.lbl{font-size:13px;color:var(--mute)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 10px}
+@media(max-width:420px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chips button{font:inherit;font-size:14px;min-height:40px;min-width:46px;border-radius:99px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}.chips button[aria-pressed=true]{background:var(--acc);border-color:var(--acc);color:#fff}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-size:12px;color:var(--mute);font-weight:600;text-align:start;border-bottom:2px solid var(--ink);padding:6px 4px}
+td{padding:8px 4px;border-bottom:1px solid var(--line)}
+tr.d{cursor:pointer}tr.d:hover{background:light-dark(#f4f1ec,#262a28)}
+tr.we td{color:var(--mute);background:light-dark(#f2efea,#1a1d1c)}
+tr.wk td{font-weight:800;background:var(--accSoft);font-size:13px}
+.num{text-align:end;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pos{color:var(--ok)}.neg{color:var(--bad)}
+.badge{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:99px;background:var(--accSoft);white-space:nowrap}
+.badge.miss{background:var(--bad);color:#fff}
+.kpi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.kpi div{background:var(--bg);border-radius:10px;padding:10px;text-align:center}.kpi b{display:block;font-size:19px;font-variant-numeric:tabular-nums;white-space:nowrap}.kpi span{font-size:12px;color:var(--mute)}
+@media(max-width:600px){.hide-s{display:none}table{font-size:13px}}
 .note{font-size:13px;color:var(--mute);margin-top:8px}
-.toast{position:fixed;inset-inline:0;bottom:18px;margin:auto;width:max-content;max-width:90vw;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:10px;opacity:0;transition:opacity .2s;pointer-events:none}
+.nav{position:fixed;inset:auto 0 0 0;background:var(--panel);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);z-index:4;padding-bottom:env(safe-area-inset-bottom)}
+.nav button{font:inherit;font-size:13px;font-weight:600;background:none;border:0;color:var(--mute);min-height:62px;cursor:pointer;display:grid;place-items:center;gap:2px}
+.nav button svg{width:24px;height:24px}
+.nav button[aria-current=page]{color:var(--acc)}
+.toast{position:fixed;inset-inline:0;bottom:84px;margin:auto;width:max-content;max-width:90vw;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:10px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
 .toast.on{opacity:1}
-.dlg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;z-index:5}
+.dlg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;z-index:6}
 .dlg.on{display:flex}
-.sheet{background:var(--panel);width:100%;max-width:720px;max-height:88vh;overflow:auto;border-radius:16px 16px 0 0;padding:18px}
-.lang{display:flex;gap:4px}.lang .small{min-height:36px;padding:4px 12px}.lang .small[aria-pressed=true]{background:var(--ink);color:var(--bg)}
-.alert{display:none;margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--brick);color:#fff;font-weight:600;text-align:center}.alert.on{display:block}.alert.info{background:transparent;color:var(--ink);border:2px solid var(--amber)}
-.plan{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:14px;color:var(--mute);justify-content:center}.plan .done{color:var(--ok)}.plan .now{color:var(--brick);font-weight:800}
-.total{text-align:center;margin:4px 0 14px;padding:12px;border-radius:12px;background:var(--ink);color:var(--bg)}.total b{display:block;font-size:30px;line-height:1.15}.total span{font-size:14px;opacity:.8}
-.brand{background:#16191a;color:#fff;margin:-18px calc(-1*max(4vw,14px)) 0;padding:14px max(4vw,14px);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.brand img{height:44px;width:auto;display:block}.brand h1{font-size:17px;font-weight:600;opacity:.9}.brand .small{background:transparent;color:#fff;border-color:#4a4f50}.brand .small[aria-pressed=true]{background:#269282;border-color:#269282;color:#fff}
-.ev{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto;gap:8px;margin-bottom:8px}
-label{font-size:14px;color:var(--mute)}
+.sheet{background:var(--panel);width:100%;max-width:720px;max-height:90vh;overflow:auto;border-radius:16px 16px 0 0;padding:18px}
+.ev{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(104px,1fr) auto auto;gap:6px;margin-bottom:8px;align-items:center}
+.nd{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--mute);white-space:nowrap}.nd input{width:20px;min-height:20px}
+.ulist{display:grid;gap:8px}.ulist button{display:flex;align-items:center;gap:10px;text-align:start;font:inherit;background:var(--bg);border:2px solid transparent;border-radius:12px;padding:8px;color:var(--ink);cursor:pointer;min-height:56px}.ulist button[aria-current=true]{border-color:var(--acc)}
+.photo{display:flex;align-items:center;gap:16px;margin-bottom:12px}
 @media(prefers-reduced-motion:reduce){.toast{transition:none}}
-@media(max-width:600px){table{font-size:13px}.hide-s{display:none}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="top brand"><div class="row" style="gap:14px"><img id="logo" alt="GST"><h1 data-i="app"></h1></div>
-    <div class="lang" role="group" aria-label="Sprache / Language"><button class="small" data-l="de">DE</button><button class="small" data-l="en">EN</button></div>
-  </div>
-  <div class="sync" id="sync" style="margin-top:8px"></div>
+<header class="brand">
+  <img class="logo" id="logo" alt="GST">
+  <button class="who" id="who" aria-label="Profil"></button>
+  <div class="lang" role="group" aria-label="Sprache / Language"><button data-l="de">DE</button><button data-l="en">EN</button></div>
+</header>
+<main class="wrap" id="view"></main>
+<nav class="nav" id="nav"></nav>
 
-  <section class="card">
-    <div class="clock" id="clock">--:--</div>
-    <div class="date" id="today"></div>
-    <div class="status"><span class="pill s-off" id="status"></span></div>
-    <div class="alert" id="alert" role="alert"></div>
-    <div class="btns">
-      <button class="btn main wide" id="b-in"></button>
-      <button class="btn" id="b-break" data-i="break"></button>
-      <button class="btn" id="b-lunch" data-i="lunch"></button>
-      <button class="btn wide" id="b-back" data-i="back"></button>
-      <button class="btn main wide" id="b-out" data-i="outBtn"></button>
-    </div>
-    <div class="row" style="margin-top:12px;justify-content:space-between">
-      <button class="small" id="b-undo" data-i="undo"></button>
-      <button class="small" id="b-edit-today" data-i="editToday"></button>
-    </div>
-    <div class="plan" id="plan"></div>
-    <div class="row" style="margin-top:10px;justify-content:center"><button class="small" id="b-notif" data-i="notifOn"></button></div>
-  </section>
-
-  <section class="card">
-    <h2 data-i="todayCard"></h2>
-    <div class="total"><span data-i="workedToday"></span><b id="s-total">0 Std. 0 Min.</b><span id="s-presence"></span></div>
-    <ul class="tl" id="tl"></ul>
-    <div class="sum">
-      <div><b id="s-work">0:00</b><span data-i="net"></span></div>
-      <div><b id="s-break">0:00</b><span data-i="breaks"></span></div>
-      <div><b id="s-lunch">0:00</b><span data-i="lunchT"></span></div>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2 data-i="monthly"></h2>
-    <div class="row">
-      <input type="month" id="month">
-      <input id="name" style="flex:1">
-    </div>
-    <div style="overflow-x:auto;margin-top:10px">
-      <table>
-        <thead><tr><th data-i="day"></th><th class="num" data-i="start"></th><th class="num" data-i="end"></th><th class="num hide-s" data-i="breaks"></th><th class="num hide-s" data-i="lunchT"></th><th class="num" data-i="net"></th></tr></thead>
-        <tbody id="mbody"></tbody>
-        <tfoot><tr><td id="m-days"></td><td></td><td></td><td class="hide-s"></td><td class="hide-s"></td><td class="num" id="m-total">0:00</td></tr></tfoot>
-      </table>
-    </div>
-    <p class="note" data-i="hint"></p>
-    <div class="row" style="justify-content:space-between;margin-top:8px">
-      <button class="small" id="b-addday" data-i="addDay"></button>
-      <button class="small primary" id="b-xlsx" data-i="excel"></button>
-    </div>
-    <div class="row" style="justify-content:space-between;margin-top:14px;border-top:1px solid var(--line);padding-top:12px">
-      <button class="small" id="b-backup" data-i="backup"></button>
-      <label class="small" style="display:inline-flex;align-items:center;cursor:pointer"><span data-i="restore"></span><input type="file" id="f-restore" accept=".json,application/json" hidden></label>
-    </div>
-    <p class="note" data-i="backupHint"></p>
-  </section>
-</div>
-
-<div class="dlg" id="dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-t">
-  <div class="sheet">
-    <h2 id="dlg-t" data-i="editDay"></h2>
-    <div class="row" style="margin-bottom:10px"><label for="d-date" data-i="date"></label><input type="date" id="d-date"></div>
-    <div id="d-evs"></div>
-    <button class="small" id="d-add" data-i="addEntry"></button>
-    <div style="margin-top:12px"><label for="d-note" data-i="noteL"></label><input id="d-note" style="width:100%"></div>
-    <div class="row" style="justify-content:space-between;margin-top:14px">
-      <button class="small danger" id="d-del" data-i="delDay"></button>
-      <div class="row"><button class="small" id="d-cancel" data-i="cancel"></button><button class="small primary" id="d-save" data-i="save"></button></div>
-    </div>
-  </div>
-</div>
+<div class="dlg" id="dlg" role="dialog" aria-modal="true"><div class="sheet" id="sheet"></div></div>
 <div class="toast" id="toast" role="status"></div>
 
 <script src="xlsx.min.js"></script>
 <script>
 {
 const $=id=>document.getElementById(id);
-const I={
-de:{app:'Arbeitszeit',loc:'de-DE',in:'Arbeitsbeginn',inAgain:'Erneut einstempeln',break:'Pause beginnen',lunch:'Mittagspause beginnen',back:'Zurück zur Arbeit',outBtn:'Feierabend',out:'Arbeitsende',
- evBreak:'Pause',evLunch:'Mittagspause',evBack:'Zurück',undo:'Letzten Eintrag rückgängig',editToday:'Heute bearbeiten',todayCard:'Heute',net:'Netto',breaks:'Pausen',lunchT:'Mittag',
- monthly:'Monatsbericht',day:'Tag',start:'Beginn',end:'Ende',hint:'Zeile antippen, um einen Tag zu korrigieren. Fehlende Tage mit dem Button unten nachtragen.',addDay:'Tag hinzufügen / bearbeiten',excel:'Excel für diesen Monat',
- editDay:'Tag bearbeiten',date:'Datum',addEntry:'+ Eintrag',noteL:'Bemerkung (erscheint in Excel)',delDay:'Ganzen Tag löschen',sure:'Sicher? Nochmal tippen',cancel:'Abbrechen',save:'Speichern',
- sOff:'Noch nicht eingestempelt',sWork:'Bei der Arbeit',sBreak:'In der Pause',sLunch:'In der Mittagspause',sDone:'Feierabend für heute',
- none:'Heute noch nichts erfasst.',noneM:'In diesem Monat noch keine Einträge.',days:n=>n+' Arbeitstage',name:'Ihr Name',
- local:'Auf diesem Handy gespeichert',cloud:'Im Claude-Konto gespeichert ✓',syncing:'Synchronisiere…',saved:'Gespeichert',deleted:'Tag gelöscht',undone:'Letzter Eintrag entfernt',
- notifOn:'Benachrichtigungen aktivieren',notifOk:'Benachrichtigungen aktiv ✓',notifNo:'Benachrichtigungen blockiert – in den Handy-Einstellungen erlauben',backup:'Sicherung speichern',restore:'Sicherung laden',backupHint:'Alle Daten bleiben nur auf diesem Handy. Speichere regelmäßig eine Sicherung.',restored:'Sicherung geladen',badFile:'Ungültige Datei',workedToday:'Heute gearbeitet (netto)',presence:(a,p)=>'Anwesend '+a+' · davon Pausen '+p,dur:(h,m)=>h+' Std. '+m+' Min.',dayDone:w=>'Feierabend! Heute gearbeitet: '+w,plan:'Pausenplan',min:'Min.',timeBreak:m=>'Zeit für deine Pause ('+m+' Min.) – „Pause beginnen“ tippen',timeLunch:m=>'Zeit für die Mittagspause ('+m+' Min.)',backAt:(h,r)=>'Zurück um '+h+' · noch '+r+' Min.',over:r=>'Pause ist vorbei – '+r+' Min. überzogen. „Zurück zur Arbeit“ tippen',pickDate:'Bitte Datum wählen',noData:'Keine Daten in diesem Monat',noLib:'Excel-Bibliothek nicht geladen – Internet prüfen',noDl:'Download hier nicht verfügbar – in claude.ai öffnen',fileOk:'Datei gespeichert',dlNo:'Download abgebrochen',dlErr:'Download fehlgeschlagen'},
-en:{app:'Work time',loc:'en-GB',in:'Clock in',inAgain:'Clock in again',break:'Start break',lunch:'Start lunch',back:'Back to work',outBtn:'Finish & go home',out:'Clock out',
- evBreak:'Break',evLunch:'Lunch',evBack:'Back to work',undo:'Undo last entry',editToday:'Edit today',todayCard:'Today',net:'Net work',breaks:'Breaks',lunchT:'Lunch',
- monthly:'Monthly report',day:'Day',start:'Start',end:'End',hint:'Tap a row to correct a day. Add missing days with the button below.',addDay:'Add / edit a day',excel:'Excel for this month',
- editDay:'Edit day',date:'Date',addEntry:'+ Entry',noteL:'Note (shown in Excel)',delDay:'Delete whole day',sure:'Sure? Tap again',cancel:'Cancel',save:'Save',
- sOff:'Not clocked in yet',sWork:'Working',sBreak:'On break',sLunch:'At lunch',sDone:'Done for today',
- none:'Nothing recorded today yet.',noneM:'No entries this month yet.',days:n=>n+' working days',name:'Your name',
- local:'Saved on this phone',cloud:'Saved to your Claude account ✓',syncing:'Syncing…',saved:'Saved',deleted:'Day deleted',undone:'Last entry removed',
- notifOn:'Turn on notifications',notifOk:'Notifications on ✓',notifNo:'Notifications blocked – allow them in phone settings',backup:'Save backup',restore:'Load backup',backupHint:'All data stays on this phone only. Save a backup regularly.',restored:'Backup loaded',badFile:'Invalid file',workedToday:'Worked today (net)',presence:(a,p)=>'At work '+a+' · breaks '+p,dur:(h,m)=>h+' h '+m+' min',dayDone:w=>'Done! Worked today: '+w,plan:'Break plan',min:'min',timeBreak:m=>'Time for your break ('+m+' min) – tap “Start break”',timeLunch:m=>'Time for lunch ('+m+' min)',backAt:(h,r)=>'Back at '+h+' · '+r+' min left',over:r=>'Break is over – '+r+' min over. Tap “Back to work”',pickDate:'Please pick a date',noData:'No data this month',noLib:'Excel library not loaded – check internet',noDl:'Download not available here – open in claude.ai',fileOk:'File saved',dlNo:'Download cancelled',dlErr:'Download failed'}
-};
 const LOGO='data:image/png;base64,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';
-const LS='timeclock.v1';
-/* daily break plan: start time, kind, length in minutes */
-const PLAN=[{at:'10:00',t:'break',min:15},{at:'12:00',t:'lunch',min:30},{at:'14:00',t:'break',min:15}];
-const DUR={break:15,lunch:30};
-let buzzed='';
-let swReg=null;
-function notify(msg){
-  try{navigator.vibrate&&navigator.vibrate([400,200,400])}catch(e){console.error(e)}
-  if(!('Notification' in window)||Notification.permission!=='granted')return;
-  try{if(swReg)swReg.showNotification(t('app'),{body:msg,icon:'icon-192.png',vibrate:[400,200,400],tag:'pause'});else new Notification(t('app'),{body:msg})}catch(e){}
-}
-let days={};
-let meta={name:'Ario Samani',ui:'de'};
-let syncKey='local';
-const t=k=>I[meta.ui][k];
-const evName=e=>({in:t('in'),break:t('evBreak'),lunch:t('evLunch'),back:t('evBack'),out:t('out')})[e];
-
+const LS='timeclock.v2';
 const pad=n=>String(n).padStart(2,'0');
 const keyOf=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parseKey=k=>new Date(k+'T12:00');
+const addDays=(k,n)=>{const d=parseKey(k);d.setDate(d.getDate()+n);return keyOf(d)};
 const hm=d=>pad(d.getHours())+':'+pad(d.getMinutes());
-const toMin=s=>{const[a,b]=s.split(':').map(Number);return a*60+b};
-const fmtL=m=>t('dur')(Math.floor(m/60),Math.round(m%60));
-const fmt=m=>Math.floor(m/60)+':'+pad(Math.round(m%60));
+const toMin=s=>{const[a,b]=String(s||'0:0').split(':').map(Number);return a*60+(b||0)};
+const fmt=m=>{m=Math.round(m);const s=m<0?'-':'';m=Math.abs(m);return s+Math.floor(m/60)+':'+pad(m%60)};
+const fmtS=m=>(Math.round(m)>0?'+':'')+fmt(m);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,10);
 
-function loadLocal(){try{const o=JSON.parse(localStorage.getItem(LS)||'{}');days=o.days||{};meta=Object.assign(meta,o.meta||{});if(!I[meta.ui])meta.ui='de'}catch(e){}}
-function saveLocal(){try{localStorage.setItem(LS,JSON.stringify({days,meta}))}catch(e){}}
-function setSync(k){syncKey=k;$('sync').textContent=t(k)}
+/* ---------- state ---------- */
+let S={ui:'de',cur:null,users:{}};
+let view='today',buzzed=new Set(),swReg=null;
+const T=(de,en)=>S.ui==='en'?en:de;
+const LOC=()=>S.ui==='en'?'en-GB':'de-DE';
+const defProfile=()=>({first:'',last:'',photo:'',empNo:'',position:'',dept:'',company:'GST Elektro',supervisor:'',email:'',
+  contract:'full',term:'unlimited',startDate:'',weekly:40,workdays:[1,2,3,4,5],vacYear:30,vacCarry:0,otOpen:0,trackFrom:'',
+  state:'HH',remindOut:'18:30',plan:[{at:'10:00',t:'break',min:15},{at:'12:00',t:'lunch',min:30},{at:'14:00',t:'break',min:15}],lastBackup:0});
+function newUser(first,last){const id=uid();S.users[id]={id,profile:Object.assign(defProfile(),{first:first||'',last:last||'',trackFrom:keyOf(new Date())}),days:{}};return id}
+function load(){
+  try{const o=JSON.parse(localStorage.getItem(LS)||'null');if(o&&o.users){S=o}}catch(e){}
+  if(!S.users||!Object.keys(S.users).length){
+    S={ui:'de',cur:null,users:{}};
+    try{const old=JSON.parse(localStorage.getItem('timeclock.v1')||'null');
+      if(old&&old.days){const nm=(old.meta&&old.meta.name||'').split(' ');const id=newUser(nm[0],nm.slice(1).join(' '));
+        S.users[id].days=old.days;const ks=Object.keys(old.days).sort();if(ks.length)S.users[id].profile.trackFrom=ks[0];S.ui=old.meta&&old.meta.ui||'de';S.cur=id}}catch(e){}
+  }
+  for(const u of Object.values(S.users))u.profile=Object.assign(defProfile(),u.profile);
+  if(!S.cur||!S.users[S.cur])S.cur=Object.keys(S.users)[0]||null;
+}
+function save(){try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){toast(T('Speicher voll – Foto verkleinern oder Sicherung speichern','Storage full – save a backup'))}}
+const U=()=>S.users[S.cur];const P=()=>U().profile;const D=()=>U().days;
+const fullName=p=>((p.first||'')+' '+(p.last||'')).trim()||T('Ohne Namen','No name');
+const initials=p=>((p.first||'?')[0]+(p.last||'')[0]||'').toUpperCase();
+const avatar=(p,big)=>p.photo?`<img class="av${big?' big':''}" src="${p.photo}" alt="">`:`<span class="av${big?' big':''}">${esc(initials(p)||'?')}</span>`;
 
-function sorted(ev){return [...ev].sort((a,b)=>toMin(a.at)-toMin(b.at))}
-function calc(day){
-  const r={gross:0,work:0,brk:0,lunch:0,start:'',end:'',breaks:[],lunches:[],state:'off'};
-  if(!day||!day.ev.length)return r;
+/* ---------- holidays (Germany, by state) ---------- */
+const STATES={BW:'Baden-Württemberg',BY:'Bayern',BE:'Berlin',BB:'Brandenburg',HB:'Bremen',HH:'Hamburg',HE:'Hessen',MV:'Mecklenburg-Vorpommern',NI:'Niedersachsen',NW:'Nordrhein-Westfalen',RP:'Rheinland-Pfalz',SL:'Saarland',SN:'Sachsen',ST:'Sachsen-Anhalt',SH:'Schleswig-Holstein',TH:'Thüringen'};
+const holCache={};
+function holidays(y,st){
+  const ck=y+st;if(holCache[ck])return holCache[ck];
+  const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451);
+  const em=Math.floor((h+l-7*m+114)/31),ed=((h+l-7*m+114)%31)+1,E=y+'-'+pad(em)+'-'+pad(ed);
+  const r={},add=(k,n,states)=>{if(!states||states.includes(st))r[k]=n};
+  add(y+'-01-01','Neujahr');add(addDays(E,-2),'Karfreitag');add(addDays(E,1),'Ostermontag');add(y+'-05-01','Tag der Arbeit');
+  add(addDays(E,39),'Christi Himmelfahrt');add(addDays(E,50),'Pfingstmontag');add(y+'-10-03','Tag der Deutschen Einheit');
+  add(y+'-12-25','1. Weihnachtstag');add(y+'-12-26','2. Weihnachtstag');
+  add(y+'-01-06','Heilige Drei Könige',['BW','BY','ST']);add(y+'-03-08','Internationaler Frauentag',['BE','MV']);
+  add(addDays(E,60),'Fronleichnam',['BW','BY','HE','NW','RP','SL']);add(y+'-08-15','Mariä Himmelfahrt',['SL']);
+  add(y+'-09-20','Weltkindertag',['TH']);add(y+'-10-31','Reformationstag',['BB','MV','SN','ST','TH','HB','HH','NI','SH']);
+  add(y+'-11-01','Allerheiligen',['BW','BY','NW','RP','SL']);
+  const n23=new Date(y,10,23);let bb=new Date(n23);do{bb.setDate(bb.getDate()-1)}while(bb.getDay()!==3);add(keyOf(bb),'Buß- und Bettag',['SN']);
+  return holCache[ck]=r;
+}
+const holName=k=>holidays(+k.slice(0,4),P().state)[k]||'';
+
+/* ---------- day maths ---------- */
+const TYPES={work:['Arbeit','Work'],vac:['Urlaub','Vacation'],sick:['Krank','Sick'],hol:['Feiertag','Holiday'],comp:['Freizeitausgleich','Time off in lieu']};
+const typeName=t=>T(...TYPES[t]);
+const EVN={in:['Arbeitsbeginn','Clock in'],break:['Pause','Break'],lunch:['Mittagspause','Lunch'],back:['Zurück','Back to work'],out:['Arbeitsende','Clock out']};
+const evName=t=>T(...EVN[t]);
+const absM=e=>toMin(e.at)+(e.nd?1440:0);
+const sorted=ev=>[...(ev||[])].sort((a,b)=>absM(a)-absM(b));
+const isWorkday=k=>P().workdays.includes(parseKey(k).getDay())&&!holName(k);
+const dailyTarget=()=>Math.round((+P().weekly||0)*60/Math.max(1,P().workdays.length));
+function liveNow(k){const n=new Date(),t=keyOf(n);if(k===t)return toMin(hm(n));if(k===addDays(t,-1))return toMin(hm(n))+1440;return null}
+function calc(k){
+  const day=D()[k],r={gross:0,work:0,brk:0,lunch:0,start:'',end:'',breaks:[],lunches:[],state:'off',startM:null,endM:null};
+  if(!day||!day.ev||!day.ev.length)return r;
   let mode='off',since=0,sinceStr='';
   for(const e of sorted(day.ev)){
-    const m=toMin(e.at);
+    const m=absM(e),lab=e.at;
     if(mode==='work')r.work+=m-since;
-    if(mode==='break'){r.brk+=m-since;r.breaks.push(sinceStr+'–'+e.at)}
-    if(mode==='lunch'){r.lunch+=m-since;r.lunches.push(sinceStr+'–'+e.at)}
-    if(e.t==='in'&&!r.start)r.start=e.at;
-    if(e.t==='out')r.end=e.at;
-    mode=e.t==='in'||e.t==='back'?'work':e.t==='break'?'break':e.t==='lunch'?'lunch':'done';
-    since=m;sinceStr=e.at;
+    if(mode==='break'){r.brk+=m-since;r.breaks.push(sinceStr+'–'+lab)}
+    if(mode==='lunch'){r.lunch+=m-since;r.lunches.push(sinceStr+'–'+lab)}
+    if(e.t==='in'&&r.startM===null){r.start=e.at;r.startM=m}
+    if(e.t==='out'){r.end=e.at+(e.nd?' (+1)':'');r.endM=m}
+    mode=e.t==='in'||e.t==='back'?'work':e.t==='break'?'break':e.t==='lunch'?'lunch':'done';since=m;sinceStr=lab;
   }
-  if(day.date===keyOf(new Date())){
-    const now=toMin(hm(new Date()));
-    if(mode==='work')r.work+=Math.max(0,now-since);
-    if(mode==='break')r.brk+=Math.max(0,now-since);
-    if(mode==='lunch')r.lunch+=Math.max(0,now-since);
-  }
+  const now=liveNow(k);
+  if(now!==null&&mode!=='done'&&mode!=='off'){const dd=Math.max(0,now-since);if(mode==='work')r.work+=dd;if(mode==='break')r.brk+=dd;if(mode==='lunch')r.lunch+=dd}
   r.gross=r.work+r.brk+r.lunch;r.state=mode;return r;
 }
-
-async function persist(date){
-  const d=days[date];saveLocal();
-
+/* the day a punch belongs to: yesterday if a shift is still open and it is before noon */
+function activeKey(){
+  const n=new Date(),t=keyOf(n),y=addDays(t,-1),ty=D()[t];
+  if((!ty||!ty.ev||!ty.ev.length)&&n.getHours()<12){const st=calc(y).state;if(st==='work'||st==='break'||st==='lunch')return y}
+  return t;
 }
-function toast(x){const el=$('toast');el.textContent=x;el.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>el.classList.remove('on'),2200)}
-
-function punch(k){
-  const now=new Date(),key=keyOf(now);
-  const d=days[key]||(days[key]={date:key,ev:[],note:''});
-  d.ev.push({t:k,at:hm(now)});d.updated=Date.now();
-  persist(key);render();
-  if(k==='out'){const msg=t('dayDone')(fmtL(calc(d).work));toast(msg);if(typeof notify==='function')notify(msg)}else toast(evName(k)+' — '+hm(now));
+function dayInfo(k){
+  const d=D()[k],today=keyOf(new Date()),c=calc(k),wd=isWorkday(k),target=wd?dailyTarget():0;
+  let type=d&&d.type||(d&&d.ev&&d.ev.length?'work':(holName(k)?'hol':''));
+  let ist=0,counted=true,missing=false;
+  if(type==='vac'||type==='sick'||type==='hol')ist=target;
+  else if(type==='comp')ist=0;
+  else if(type==='work'){ist=c.work;if(c.state!=='done'&&(k===today||k===activeKey()))counted=false}
+  else{ if(k>=today)counted=false; else if(wd&&k>=P().trackFrom)missing=true; }
+  if(k<P().trackFrom)counted=false;
+  return {k,type,c,wd,target,ist,diff:ist-target,counted,missing,hol:holName(k),note:d&&d.note||''};
 }
+function balance(upTo){
+  let b=Math.round((+P().otOpen||0)*60),k=P().trackFrom||keyOf(new Date());
+  const end=upTo<keyOf(new Date())?upTo:keyOf(new Date());
+  let guard=0;while(k<=end&&guard++<4000){const i=dayInfo(k);if(i.counted)b+=i.diff;k=addDays(k,1)}
+  return b;
+}
+function vacTaken(y,upTo){let n=0;for(const[k,d]of Object.entries(D()))if(k.startsWith(y)&&(!upTo||k<=upTo)&&d.type==='vac'&&isWorkday(k))n++;return n}
+function warnings(k){
+  const i=dayInfo(k),c=i.c,w=[];if(i.type!=='work'||!c.startM&&c.startM!==0)return w;
+  const p=c.brk+c.lunch;
+  if(c.work>360&&p<30)w.push(T('Mehr als 6 Std. Arbeit, aber weniger als 30 Min. Pause (§4 ArbZG)','Over 6 h work but under 30 min break (§4 ArbZG)'));
+  if(c.work>540&&p<45)w.push(T('Mehr als 9 Std. Arbeit, aber weniger als 45 Min. Pause (§4 ArbZG)','Over 9 h work but under 45 min break (§4 ArbZG)'));
+  if(c.work>600)w.push(T('Mehr als 10 Std. Arbeit an einem Tag (§3 ArbZG)','Over 10 h work in one day (§3 ArbZG)'));
+  const pc=calc(addDays(k,-1));if(pc.endM!==null&&c.startM!==null){const rest=c.startM+1440-pc.endM;if(rest<660)w.push(T('Weniger als 11 Std. Ruhezeit seit gestern ('+fmt(rest)+') (§5 ArbZG)','Less than 11 h rest since yesterday ('+fmt(rest)+') (§5 ArbZG)'))}
+  return w;
+}
+function isoWeek(k){const d=parseKey(k);d.setDate(d.getDate()+3-((d.getDay()+6)%7));const w1=new Date(d.getFullYear(),0,4);return 1+Math.round(((d-w1)/864e5-3+((w1.getDay()+6)%7))/7)}
 
-function applyLang(){
-  document.documentElement.lang=meta.ui;document.title=t('app');
-  document.querySelectorAll('[data-i]').forEach(el=>el.textContent=t(el.dataset.i));
-  document.querySelectorAll('[data-l]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===meta.ui));
-  $('name').placeholder=t('name');$('sync').textContent=t(syncKey);
-  const del=$('d-del');del.dataset.sure='';
+/* ---------- ui helpers ---------- */
+function toast(x){const el=$('toast');el.textContent=x;el.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>el.classList.remove('on'),2400)}
+function notify(key,msg){
+  if(buzzed.has(key))return;buzzed.add(key);
+  try{navigator.vibrate&&navigator.vibrate([400,200,400])}catch(e){}
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  try{if(swReg)swReg.showNotification('Arbeitszeit',{body:msg,icon:'icon-192.png',tag:key});else new Notification('Arbeitszeit',{body:msg})}catch(e){}
+}
+function saveFile(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}
+const ICON={today:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+ month:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+ profile:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>'};
+
+function renderChrome(){
+  document.documentElement.lang=S.ui;
+  document.querySelectorAll('[data-l]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===S.ui));
+  $('who').innerHTML=U()?avatar(P())+`<span>${esc(fullName(P()))}</span>`:'';
+  $('nav').innerHTML=[['today',T('Heute','Today')],['month',T('Monat','Month')],['profile',T('Profil','Profile')]].map(([v,l])=>`<button data-view="${v}"${view===v?' aria-current="page"':''}>${ICON[v]}${l}</button>`).join('');
+}
+function render(){renderChrome();({today:renderToday,month:renderMonth,profile:renderProfile})[view]()}
+
+/* ---------- today ---------- */
+function renderToday(){
+  const now=new Date(),t=keyOf(now),k=activeKey(),i=dayInfo(k),c=i.c,st=c.state,p=P();
+  const nowM=liveNow(k),evs=sorted((D()[k]||{}).ev);
+  const S2={off:[T('Noch nicht eingestempelt','Not clocked in yet'),'s-off'],work:[T('Bei der Arbeit','Working'),'s-work'],break:[T('In der Pause','On break'),'s-pause'],lunch:[T('In der Mittagspause','At lunch'),'s-pause'],done:[T('Feierabend für heute','Done for today'),'s-off']}[st];
+  const alerts=[];
+  // yesterday without clock-out
+  const y=addDays(t,-1),yc=calc(y);
+  if(k===t&&(yc.state==='work'||yc.state==='break'||yc.state==='lunch'))alerts.push(`<div class="alert bad">${T('Gestern wurde kein Feierabend erfasst.','Yesterday has no clock-out.')}<br><button class="small" data-act="edit" data-d="${y}">${T('Gestern korrigieren','Fix yesterday')}</button></div>`);
+  if(i.type&&i.type!=='work')alerts.push(`<div class="alert good">${typeName(i.type)}${i.hol?' · '+esc(i.hol):''}</div>`);
+  else if(!evs.length&&i.hol)alerts.push(`<div class="alert good">${T('Feiertag','Public holiday')}: ${esc(i.hol)}</div>`);
+  const taken=pl=>evs.some(e=>e.t===pl.t&&Math.abs(absM(e)-toMin(pl.at))<=60);
+  if(st==='work'){
+    const pl=p.plan.find(pl=>nowM>=toMin(pl.at)&&nowM<toMin(pl.at)+(+pl.min)&&!taken(pl));
+    if(pl){const msg=pl.t==='lunch'?T('Zeit für die Mittagspause ('+pl.min+' Min.)','Time for lunch ('+pl.min+' min)'):T('Zeit für deine Pause ('+pl.min+' Min.)','Time for your break ('+pl.min+' min)');alerts.push(`<div class="alert bad">${msg}</div>`);notify(k+pl.at,msg)}
+  }
+  if(st==='break'||st==='lunch'){
+    const last=evs[evs.length-1],pl=p.plan.find(pl=>pl.t===st&&Math.abs(absM(last)-toMin(pl.at))<=60);
+    const endM=absM(last)+(pl?+pl.min:(st==='lunch'?30:15)),left=endM-nowM,hh=pad(Math.floor(endM/60)%24)+':'+pad(endM%60);
+    if(left>=0)alerts.push(`<div class="alert info">${T('Zurück um '+hh+' · noch '+left+' Min.','Back at '+hh+' · '+left+' min left')}</div>`);
+    else{const msg=T('Pause vorbei – '+(-left)+' Min. überzogen','Break is over – '+(-left)+' min over');alerts.push(`<div class="alert bad">${msg}</div>`);notify(k+'over'+last.at,msg)}
+  }
+  if((st==='work'||st==='break'||st==='lunch')&&nowM>=toMin(p.remindOut)){const msg=T('Noch eingestempelt – Feierabend vergessen?','Still clocked in – forgot to clock out?');alerts.push(`<div class="alert info">${msg}</div>`);notify(k+'remind',msg)}
+  if(st==='done')alerts.push(`<div class="alert good">${T('Feierabend! Heute gearbeitet: ','Done! Worked today: ')}<b>${fmt(c.work)}</b> · ${T('Saldo','Balance')} ${fmtS(i.diff)}</div>`);
+  if(now.getDay()===5&&Date.now()-(p.lastBackup||0)>6*864e5)alerts.push(`<div class="alert info">${T('Freitag: Zeit für eine Sicherung.','Friday: time for a backup.')}<br><button class="small" data-act="backup">${T('Sicherung speichern','Save backup')}</button></div>`);
+  const w=warnings(k);
+  const notifBtn=('Notification' in window)&&Notification.permission!=='granted'?`<div class="row" style="justify-content:center;margin-top:10px"><button class="small" data-act="notif">${Notification.permission==='denied'?T('Benachrichtigungen blockiert – in den Einstellungen erlauben','Notifications blocked – allow in settings'):T('Benachrichtigungen aktivieren','Turn on notifications')}</button></div>`:'';
+  $('view').innerHTML=`
+  <p class="sync">${T('Auf diesem Handy gespeichert','Saved on this phone')}${k!==t?' · '+T('Nachtschicht von gestern','Night shift from yesterday'):''}</p>
+  <section class="card">
+    <div class="clock">${hm(now)}</div>
+    <div class="date">${now.toLocaleDateString(LOC(),{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
+    <div class="status"><span class="pill ${S2[1]}">${S2[0]}</span></div>
+    ${alerts.join('')}
+    <div class="btns">
+      <button class="btn main wide" data-punch="in" ${st==='off'||st==='done'?'':'disabled'}>${st==='done'?T('Erneut einstempeln','Clock in again'):T('Arbeitsbeginn','Clock in')}</button>
+      <button class="btn" data-punch="break" ${st==='work'?'':'disabled'}>${T('Pause beginnen','Start break')}</button>
+      <button class="btn" data-punch="lunch" ${st==='work'?'':'disabled'}>${T('Mittagspause beginnen','Start lunch')}</button>
+      <button class="btn wide" data-punch="back" ${st==='break'||st==='lunch'?'':'disabled'}>${T('Zurück zur Arbeit','Back to work')}</button>
+      <button class="btn main wide" data-punch="out" ${st==='work'||st==='break'||st==='lunch'?'':'disabled'}>${T('Feierabend','Finish & go home')}</button>
+    </div>
+    <div class="row between" style="margin-top:12px">
+      <button class="small" data-act="undo" ${evs.length?'':'disabled'}>${T('Letzten Eintrag rückgängig','Undo last entry')}</button>
+      <button class="small" data-act="edit" data-d="${k}">${T('Tag bearbeiten','Edit day')}</button>
+    </div>
+    <div class="plan"><span>${T('Pausenplan','Break plan')}:</span>${p.plan.map(pl=>{const tk=taken(pl),nw=nowM>=toMin(pl.at)&&nowM<toMin(pl.at)+(+pl.min);return `<span class="${tk?'done':nw?'now':''}">${pl.at} ${pl.t==='lunch'?T('Mittag','Lunch'):T('Pause','Break')} ${pl.min} ${T('Min.','min')}${tk?' ✓':''}</span>`}).join('')}</div>
+    ${notifBtn}
+  </section>
+  <section class="card">
+    <h2>${k===t?T('Heute','Today'):T('Gestern (Nachtschicht)','Yesterday (night shift)')}</h2>
+    <div class="total"><span>${T('Heute gearbeitet (netto)','Worked today (net)')}</span><b>${T(Math.floor(c.work/60)+' Std. '+Math.round(c.work%60)+' Min.',Math.floor(c.work/60)+' h '+Math.round(c.work%60)+' min')}</b><span>${T('Anwesend','At work')} ${fmt(c.gross)} · ${T('Pausen','Breaks')} ${fmt(c.brk+c.lunch)}</span></div>
+    <ul class="tl">${evs.length?evs.map(e=>`<li><span>${evName(e.t)}</span><span class="t">${e.at}${e.nd?' (+1)':''}</span></li>`).join(''):`<li style="color:var(--mute)">${T('Noch nichts erfasst.','Nothing recorded yet.')}</li>`}</ul>
+    ${w.length?`<ul class="warns">${w.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}
+    <div class="sum">
+      <div><b>${fmt(i.target)}</b><span>${T('Soll','Target')}</span></div>
+      <div><b class="${i.diff>=0?'pos':'neg'}">${fmtS(i.type==='work'||i.type?i.diff:0)}</b><span>${T('Differenz','Difference')}</span></div>
+      <div><b class="${balance(t)>=0?'pos':'neg'}">${fmtS(balance(t))}</b><span>${T('Überstunden-Saldo','Overtime balance')}</span></div>
+    </div>
+  </section>`;
+}
+function punch(type){
+  const k=activeKey(),t=keyOf(new Date()),now=new Date();
+  const d=D()[k]||(D()[k]={date:k,ev:[],note:''});
+  const e={t:type,at:hm(now)};if(k!==t)e.nd=true;
+  d.ev.push(e);if(!d.type)d.type='work';d.updated=Date.now();save();
+  if(type==='out'){const c=calc(k),i=dayInfo(k);const msg=T('Feierabend! Heute gearbeitet: '+fmt(c.work)+' Std. ('+fmtS(i.diff)+')','Done! Worked today: '+fmt(c.work)+' h ('+fmtS(i.diff)+')');toast(msg);notify(k+'out'+e.at,msg)}
+  else toast(evName(type)+' — '+e.at);
   render();
 }
 
-function renderToday(){
-  const now=new Date(),k=keyOf(now),d=days[k],c=calc(d),st=c.state;
-  $('clock').textContent=hm(now);
-  $('today').textContent=now.toLocaleDateString(t('loc'),{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  const S={off:['sOff','s-off'],work:['sWork','s-work'],break:['sBreak','s-pause'],lunch:['sLunch','s-pause'],done:['sDone','s-off']}[st];
-  $('status').textContent=t(S[0]);$('status').className='pill '+S[1];
-  $('b-in').disabled=!(st==='off'||st==='done');
-  $('b-in').textContent=st==='done'?t('inAgain'):t('in');
-  $('b-break').disabled=st!=='work';$('b-lunch').disabled=st!=='work';
-  $('b-back').disabled=!(st==='break'||st==='lunch');
-  $('b-out').disabled=!(st==='work'||st==='break'||st==='lunch');
-  $('b-undo').disabled=!(d&&d.ev.length);
-  $('tl').innerHTML=d&&d.ev.length?sorted(d.ev).map(e=>`<li><span>${evName(e.t)}</span><span class="t">${e.at}</span></li>`).join(''):`<li class="empty">${t('none')}</li>`;
-  const nowM=toMin(hm(now)),evs=d?sorted(d.ev):[];
-  const taken=p=>evs.some(e=>e.t===p.t&&Math.abs(toMin(e.at)-toMin(p.at))<=60);
-  const al=$('alert');al.className='alert';al.textContent='';
-  if(st==='work'){
-    const p=PLAN.find(p=>nowM>=toMin(p.at)&&nowM<toMin(p.at)+p.min&&!taken(p));
-    if(p){al.textContent=p.t==='lunch'?t('timeLunch')(p.min):t('timeBreak')(p.min);al.className='alert on';
-      if(buzzed!==k+p.at){buzzed=k+p.at;notify(al.textContent)}}
-  }else if(st==='done'){al.textContent=t('dayDone')(fmtL(c.work));al.className='alert on info'
-  }else if(st==='break'||st==='lunch'){
-    const last=evs[evs.length-1],p=PLAN.find(p=>p.t===st&&Math.abs(toMin(last.at)-toMin(p.at))<=60);
-    const endM=toMin(last.at)+(p?p.min:DUR[st]),left=endM-nowM;
-    if(left>=0){al.textContent=t('backAt')(pad(Math.floor(endM/60)%24)+':'+pad(endM%60),left);al.className='alert on info'}
-    else{al.textContent=t('over')(-left);al.className='alert on';
-      if(buzzed!==k+'over'+last.at){buzzed=k+'over'+last.at;notify(al.textContent)}}
-  }
-  $('plan').innerHTML='<span>'+t('plan')+':</span>'+PLAN.map(p=>{const cls=taken(p)?'done':(nowM>=toMin(p.at)&&nowM<toMin(p.at)+p.min?'now':'');
-    return `<span class="${cls}">${p.at} ${p.t==='lunch'?t('evLunch'):t('evBreak')} ${p.min} ${t('min')}${taken(p)?' ✓':''}</span>`}).join('');
-  $('s-total').textContent=fmtL(c.work);$('s-presence').textContent=t('presence')(fmt(c.gross),fmt(c.brk+c.lunch));
-  $('s-work').textContent=fmt(c.work);$('s-break').textContent=fmt(c.brk);$('s-lunch').textContent=fmt(c.lunch);
+/* ---------- month ---------- */
+let month=keyOf(new Date()).slice(0,7);
+function monthRows(m){const[yy,mm]=m.split('-').map(Number),n=new Date(yy,mm,0).getDate();return Array.from({length:n},(_,i)=>dayInfo(m+'-'+pad(i+1)))}
+function monthStats(m){
+  const rows=monthRows(m);let soll=0,ist=0,diff=0,work=0,vac=0,sick=0,miss=0,brk=0,gross=0;
+  for(const r of rows){if(!r.counted)continue;soll+=r.target;ist+=r.ist;diff+=r.diff;if(r.type==='work'&&r.c.work>0){work++;brk+=r.c.brk+r.c.lunch;gross+=r.c.gross}if(r.type==='vac'&&r.wd)vac++;if(r.type==='sick'&&r.wd)sick++;if(r.missing)miss++}
+  const last=rows[rows.length-1].k,y=m.slice(0,4);
+  const vacLeft=(+P().vacYear||0)+(+P().vacCarry||0)-vacTaken(y);
+  return {rows,soll,ist,diff,work,vac,sick,miss,brk,gross,bal:balance(last),vacLeft,vacYearTaken:vacTaken(y)};
 }
-function monthDays(){const m=$('month').value;return Object.values(days).filter(d=>d.date.startsWith(m)&&d.ev.length).sort((a,b)=>a.date<b.date?-1:1)}
 function renderMonth(){
-  const list=monthDays();let tot=0;
-  $('mbody').innerHTML=list.length?list.map(d=>{const c=calc(d);tot+=c.work;const dt=new Date(d.date+'T12:00');
-    return `<tr data-d="${d.date}"><td>${dt.toLocaleDateString(t('loc'),{weekday:'short',day:'2-digit',month:'2-digit'})}</td><td class="num">${c.start||'—'}</td><td class="num">${c.end||'—'}</td><td class="num hide-s">${fmt(c.brk)}</td><td class="num hide-s">${fmt(c.lunch)}</td><td class="num"><b>${fmt(c.work)}</b></td></tr>`}).join('')
-    :`<tr><td colspan="6" class="empty">${t('noneM')}</td></tr>`;
-  $('m-days').textContent=t('days')(list.length);$('m-total').textContent=fmt(tot);
-}
-function render(){renderToday();renderMonth()}
-
-/* day editor */
-let editing=null;
-function evRow(e){return `<div class="ev"><select aria-label="Typ">${['in','break','lunch','back','out'].map(k=>`<option value="${k}"${k===e.t?' selected':''}>${evName(k)}</option>`).join('')}</select><input type="time" value="${e.at}"><button class="small danger" data-x aria-label="x">✕</button></div>`}
-function openEditor(date){
-  editing=date;const d=days[date]||{ev:[],note:''};
-  $('d-date').value=date;$('d-evs').innerHTML=sorted(d.ev).map(evRow).join('');$('d-note').value=d.note||'';
-  $('d-del').dataset.sure='';$('d-del').textContent=t('delDay');
-  $('dlg').classList.add('on');
-}
-$('d-evs').addEventListener('click',e=>{if(e.target.closest('[data-x]'))e.target.closest('.ev').remove()});
-$('d-add').onclick=()=>{const n=$('d-evs').children.length;$('d-evs').insertAdjacentHTML('beforeend',evRow({t:n?'out':'in',at:n?'17:00':'08:00'}))};
-$('d-date').onchange=()=>{const v=$('d-date').value;if(v&&days[v]&&v!==editing)openEditor(v)};
-$('d-cancel').onclick=()=>$('dlg').classList.remove('on');
-$('d-save').onclick=()=>{
-  const date=$('d-date').value;if(!date){toast(t('pickDate'));return}
-  const ev=[...$('d-evs').children].map(r=>({t:r.querySelector('select').value,at:r.querySelector('input').value})).filter(e=>e.at);
-  if(editing&&editing!==date&&days[editing]){delete days[editing];persist(editing)}
-  if(ev.length){days[date]={date,ev,note:$('d-note').value.trim(),updated:Date.now()}}else delete days[date];
-  persist(date);$('dlg').classList.remove('on');render();toast(t('saved'));
-};
-$('d-del').onclick=()=>{
-  const b=$('d-del');if(b.dataset.sure!=='1'){b.dataset.sure='1';b.textContent=t('sure');return}
-  b.dataset.sure='';const date=editing;delete days[date];persist(date);$('dlg').classList.remove('on');render();toast(t('deleted'));
-};
-
-/* excel: bilingual German / English */
-function saveFile(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}
-async function exportXlsx(){
-  if(!window.XLSX){toast(t('noLib'));return}
-  const list=monthDays();if(!list.length){toast(t('noData'));return}
-  const m=$('month').value,mid=new Date(m+'-15'),[yy,mm]=m.split('-').map(Number),nDays=new Date(yy,mm,0).getDate();
-  const monthName=mid.toLocaleDateString('de-DE',{month:'long',year:'numeric'})+' / '+mid.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
-  const H=['Datum / Date','Tag / Day','Beginn / Start','Pausen / Breaks','Pause Min. / Break min','Mittag / Lunch','Mittag Min. / Lunch min','Ende / End','Anwesenheit / At work','Netto / Net h:mm','Netto Std. / Net hours','Bemerkung / Note'];
-  const NC=H.length;
-  const C={ink:'141210',brick:'269282',band:'16191A',stone:'E7E4DF',alt:'F6F4F1',wk:'EDEAE5',line:'C9C3BA',mute:'6B655D',white:'FFFFFF'};
-  const bd=(c=C.line)=>({style:'thin',color:{rgb:c}});
-  const box={top:bd(),bottom:bd(),left:bd(),right:bd()};
-  const font=(o={})=>Object.assign({name:'Calibri',sz:11,color:{rgb:C.ink}},o);
-  const cell=(v,s)=>({v:v===undefined||v===null?'':v,t:typeof v==='number'?'n':'s',s});
-  const rows=[],heights=[];
-  const blank=()=>Array.from({length:NC},()=>cell('',{}));
-  // title band
-  let r=blank();for(let i=0;i<NC;i++)r[i]=cell('',{fill:{fgColor:{rgb:C.band}}});
-  r[2]=cell('Arbeitszeitnachweis / Monthly Timesheet',{font:font({sz:18,bold:true,color:{rgb:C.white}}),fill:{fgColor:{rgb:C.band}},alignment:{vertical:'center',indent:1}});
-  rows.push(r);heights.push(46);
-  r=blank();for(let i=0;i<NC;i++)r[i]=cell('',{fill:{fgColor:{rgb:C.brick}}});rows.push(r);heights.push(4);
-  rows.push(blank());heights.push(8);
-  let tot=0,tb=0,tl=0,tg=0;const byDate={};for(const d of list)byDate[d.date]=d;
-  for(const d of list){const c=calc(d);tot+=c.work;tb+=c.brk;tl+=c.lunch;tg+=c.gross}
-  const lab=font({bold:true,color:{rgb:C.mute}}),val=font({bold:true,sz:12});
-  const info=[['Mitarbeiter / Employee',$('name').value||'','Arbeitstage / Working days',list.length],['Monat / Month',monthName,'Netto gesamt / Total net',fmt(tot)+' h']];
-  for(const [a,b,c2,d2] of info){r=blank();r[0]=cell(a,{font:lab});r[2]=cell(b,{font:val});r[7]=cell(c2,{font:lab});r[10]=cell(d2,{font:val,alignment:{horizontal:'right'}});rows.push(r);heights.push(20)}
-  rows.push(blank());heights.push(10);
-  const headerRow=rows.length;
-  rows.push(H.map(h=>cell(h,{font:font({bold:true,color:{rgb:C.white},sz:10}),fill:{fgColor:{rgb:C.ink}},alignment:{horizontal:'center',vertical:'center',wrapText:true},border:{top:bd(C.ink),bottom:bd(C.ink),left:bd('3A3530'),right:bd('3A3530')}})));heights.push(32);
-  for(let day=1;day<=nDays;day++){
-    const key=m+'-'+pad(day),dt=new Date(key+'T12:00'),wd=dt.getDay(),weekend=wd===0||wd===6,d=byDate[key],c=d?calc(d):null;
-    const fill={fgColor:{rgb:weekend?C.wk:(day%2?C.white:C.alt)}};
-    const st=(o={})=>Object.assign({fill,border:box,font:font({color:{rgb:weekend&&!d?C.mute:C.ink}}),alignment:{horizontal:'center',vertical:'center'}},o);
-    const left={horizontal:'left',vertical:'center',wrapText:true};
-    rows.push([
-      cell(dt.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'}),st()),
-      cell(dt.toLocaleDateString('de-DE',{weekday:'short'})+' / '+dt.toLocaleDateString('en-GB',{weekday:'short'}),st()),
-      cell(c?c.start:'',st()),
-      cell(c?c.breaks.join(', '):'',st({alignment:left})),
-      cell(c&&c.brk?c.brk:'',st()),
-      cell(c?c.lunches.join(', '):'',st()),
-      cell(c&&c.lunch?c.lunch:'',st()),
-      cell(c?c.end:'',st()),
-      cell(c?fmt(c.gross):'',st()),
-      cell(c?fmt(c.work):'',st({font:font({bold:true})})),
-      c?{v:Math.round(c.work/60*100)/100,t:'n',z:'0.00',s:st({font:font({bold:true})})}:cell('',st()),
-      cell(d&&d.note?d.note:'',st({alignment:left}))
-    ]);heights.push(19);
+  const s=monthStats(month);let html='',wk=null,acc={soll:0,ist:0};
+  const flush=()=>{if(wk!==null)html+=`<tr class="wk"><td colspan="2">${T('KW','Week')} ${wk}</td><td class="num hide-s">${fmt(acc.soll)}</td><td class="num">${acc.soll||acc.ist?fmt(acc.ist):''}</td><td class="num ${acc.ist-acc.soll>=0?'pos':'neg'}">${acc.soll||acc.ist?fmtS(acc.ist-acc.soll):''}</td></tr>`};
+  for(const r of s.rows){
+    const w=isoWeek(r.k);if(w!==wk){flush();wk=w;acc={soll:0,ist:0}}
+    if(r.counted){acc.soll+=r.target;acc.ist+=r.ist}
+    const dt=parseKey(r.k),we=!r.wd;
+    const badge=r.missing?`<span class="badge miss">${T('fehlt','missing')}</span>`:r.type&&r.type!=='work'?`<span class="badge">${typeName(r.type)}</span>`:'';
+    const warn=warnings(r.k).length?' ⚠':'';
+    html+=`<tr class="d${we?' we':''}" data-act="edit" data-d="${r.k}"><td>${dt.toLocaleDateString(LOC(),{weekday:'short',day:'2-digit',month:'2-digit'})}</td>
+      <td>${r.type==='work'&&r.c.start?r.c.start+'–'+(r.c.end||'…'):''} ${badge}${r.hol&&r.type!=='work'?'':''}${warn}</td>
+      <td class="num hide-s">${r.target?fmt(r.target):''}</td><td class="num"><b>${r.type||r.missing?fmt(r.ist):''}</b></td>
+      <td class="num ${r.diff>=0?'pos':'neg'}">${r.counted&&(r.type||r.missing||r.target)&&(r.diff!==0)?fmtS(r.diff):''}</td></tr>`;
   }
-  const ts=(o={})=>Object.assign({font:font({bold:true,sz:12}),fill:{fgColor:{rgb:C.stone}},alignment:{horizontal:'center',vertical:'center'},border:{top:{style:'medium',color:{rgb:C.ink}},bottom:{style:'medium',color:{rgb:C.ink}},left:bd(),right:bd()}},o);
-  rows.push([cell('Summe / Total',ts({alignment:{horizontal:'left',vertical:'center',indent:1}})),cell('',ts()),cell(list.length+' Tage / days',ts()),cell('',ts()),cell(tb,ts()),cell('',ts()),cell(tl,ts()),cell('',ts()),cell(fmt(tg),ts()),cell(fmt(tot),ts({font:font({bold:true,sz:12,color:{rgb:C.brick}})})),{v:Math.round(tot/60*100)/100,t:'n',z:'0.00',s:ts({font:font({bold:true,sz:12,color:{rgb:C.brick}})})},cell('',ts())]);heights.push(26);
-  const totalRow=rows.length-1;
+  flush();
+  $('view').innerHTML=`
+  <section class="card">
+    <div class="row between"><h2 style="margin:0">${T('Monatsbericht','Monthly report')}</h2><input type="month" id="month" value="${month}" style="width:auto"></div>
+    <div class="kpi" style="margin-top:12px">
+      <div><b>${fmt(s.ist)}</b><span>${T('Ist','Actual')}</span></div>
+      <div><b>${fmt(s.soll)}</b><span>${T('Soll','Target')}</span></div>
+      <div><b class="${s.diff>=0?'pos':'neg'}">${fmtS(s.diff)}</b><span>${T('Differenz','Difference')}</span></div>
+      <div><b class="${s.bal>=0?'pos':'neg'}">${fmtS(s.bal)}</b><span>${T('Saldo gesamt','Total balance')}</span></div>
+      <div><b>${s.vac} / ${s.vacLeft}</b><span>${T('Urlaub / Rest','Vacation / left')}</span></div>
+      <div><b>${s.sick}</b><span>${T('Krankheitstage','Sick days')}</span></div>
+    </div>
+    ${s.miss?`<div class="alert bad">${T(s.miss+' Arbeitstag(e) ohne Eintrag – bitte nachtragen','Missing entries on '+s.miss+' workday(s) – please fill in')}</div>`:''}
+    <div style="overflow-x:auto;margin-top:10px"><table>
+      <thead><tr><th>${T('Tag','Day')}</th><th>${T('Zeit','Time')}</th><th class="num hide-s">${T('Soll','Target')}</th><th class="num">${T('Ist','Actual')}</th><th class="num">+/−</th></tr></thead>
+      <tbody>${html}</tbody></table></div>
+    <p class="note">${T('Tag antippen zum Bearbeiten: Zeiten, Urlaub, Krank, Freizeitausgleich, Bemerkung.','Tap a day to edit: times, vacation, sick, time off in lieu, note.')}</p>
+  </section>
+  <section class="card">
+    <h2>${T('Export & Senden','Export & send')}</h2>
+    <div class="row">
+      <button class="small primary" data-act="share">${T('An Vorgesetzten senden','Send to supervisor')}</button>
+      <button class="small dark" data-act="xlsx">${T('Excel herunterladen','Download Excel')}</button>
+    </div>
+    <h3>${T('Sicherung','Backup')}</h3>
+    <div class="row">
+      <button class="small" data-act="backup">${T('Sicherung speichern','Save backup')}</button>
+      <label class="small" style="cursor:pointer">${T('Sicherung laden','Load backup')}<input type="file" id="f-restore" accept=".json,application/json" hidden></label>
+    </div>
+    <p class="note">${T('Alle Daten bleiben nur auf diesem Handy. Letzte Sicherung: ','All data stays on this phone only. Last backup: ')}${P().lastBackup?new Date(P().lastBackup).toLocaleDateString(LOC()):T('noch keine','none yet')}</p>
+  </section>`;
+  $('month').onchange=e=>{month=e.target.value||month;render()};
+  $('f-restore').onchange=restore;
+}
+
+/* ---------- day editor ---------- */
+let editing=null;
+function evRow(e){return `<div class="ev"><select aria-label="Typ">${Object.keys(EVN).map(k=>`<option value="${k}"${k===e.t?' selected':''}>${evName(k)}</option>`).join('')}</select><input type="time" value="${e.at}"><label class="nd"><input type="checkbox"${e.nd?' checked':''}>+1</label><button class="small danger" data-x aria-label="x">✕</button></div>`}
+function openEditor(k){
+  editing=k;const d=D()[k]||{ev:[],note:'',type:''},i=dayInfo(k);
+  $('sheet').innerHTML=`<h2>${T('Tag bearbeiten','Edit day')}</h2>
+   <div class="grid2"><div class="f"><label for="d-date">${T('Datum','Date')}</label><input type="date" id="d-date" value="${k}"></div>
+   <div class="f"><label for="d-type">${T('Art','Type')}</label><select id="d-type">${Object.keys(TYPES).map(t=>`<option value="${t}"${(d.type||i.type||'work')===t?' selected':''}>${typeName(t)}</option>`).join('')}</select></div></div>
+   ${i.hol?`<p class="note">${T('Feiertag','Public holiday')}: ${esc(i.hol)}</p>`:''}
+   <div class="lbl" style="margin-bottom:6px">${T('Zeiten (+1 = nach Mitternacht)','Times (+1 = after midnight)')}</div>
+   <div id="d-evs">${sorted(d.ev).map(evRow).join('')}</div>
+   <button class="small" id="d-add">+ ${T('Eintrag','Entry')}</button>
+   <div class="f" style="margin-top:12px"><label for="d-note">${T('Bemerkung (erscheint in Excel)','Note (shown in Excel)')}</label><input id="d-note" value="${esc(d.note||'')}"></div>
+   <div class="row between" style="margin-top:14px"><button class="small danger" id="d-del">${T('Ganzen Tag löschen','Delete whole day')}</button>
+   <div class="row"><button class="small" id="d-cancel">${T('Abbrechen','Cancel')}</button><button class="small primary" id="d-save">${T('Speichern','Save')}</button></div></div>`;
+  $('dlg').classList.add('on');
+  $('d-evs').onclick=e=>{if(e.target.closest('[data-x]'))e.target.closest('.ev').remove()};
+  $('d-add').onclick=()=>{const n=$('d-evs').children.length;$('d-evs').insertAdjacentHTML('beforeend',evRow({t:n?'out':'in',at:n?'17:00':'08:00'}))};
+  $('d-date').onchange=()=>{const v=$('d-date').value;if(v&&D()[v]&&v!==editing)openEditor(v)};
+  $('d-cancel').onclick=closeDlg;
+  $('d-save').onclick=()=>{
+    const k2=$('d-date').value;if(!k2){toast(T('Bitte Datum wählen','Please pick a date'));return}
+    const ev=[...$('d-evs').children].map(r=>{const o={t:r.querySelector('select').value,at:r.querySelector('input[type=time]').value};if(r.querySelector('input[type=checkbox]').checked)o.nd=true;return o}).filter(e=>e.at);
+    const type=$('d-type').value,note=$('d-note').value.trim();
+    if(editing!==k2)delete D()[editing];
+    if(ev.length||note||type!=='work')D()[k2]={date:k2,ev:type==='work'?ev:ev,note,type,updated:Date.now()};else delete D()[k2];
+    if(k2<P().trackFrom)P().trackFrom=k2;
+    save();closeDlg();render();toast(T('Gespeichert','Saved'));
+  };
+  $('d-del').onclick=()=>{const b=$('d-del');if(b.dataset.sure!=='1'){b.dataset.sure='1';b.textContent=T('Sicher? Nochmal tippen','Sure? Tap again');return}
+    delete D()[editing];save();closeDlg();render();toast(T('Tag gelöscht','Day deleted'))};
+}
+function closeDlg(){$('dlg').classList.remove('on')}
+
+/* ---------- profile ---------- */
+const CONTRACTS={full:['Vollzeit','Full-time'],part:['Teilzeit','Part-time'],mini:['Minijob','Mini job'],student:['Werkstudent','Working student'],trainee:['Ausbildung','Apprenticeship'],temp:['Zeitarbeit','Temporary agency'],intern:['Praktikum','Internship']};
+const TERMS={unlimited:['Unbefristet','Permanent'],limited:['Befristet','Fixed-term'],probation:['In der Probezeit','On probation']};
+function fld(key,label,type='text',extra=''){const v=P()[key];return `<div class="f"><label for="p-${key}">${label}</label><input id="p-${key}" data-p="${key}" type="${type}" value="${esc(v)}" ${extra}></div>`}
+function sel(key,label,opts){return `<div class="f"><label for="p-${key}">${label}</label><select id="p-${key}" data-p="${key}">${Object.entries(opts).map(([k,v])=>`<option value="${k}"${P()[key]===k?' selected':''}>${Array.isArray(v)?T(...v):v}</option>`).join('')}</select></div>`}
+function renderProfile(){
+  const p=P(),days=['So','Mo','Di','Mi','Do','Fr','Sa'],daysE=['Su','Mo','Tu','We','Th','Fr','Sa'];
+  $('view').innerHTML=`
+  <section class="card">
+    <h2>${T('Persönliche Daten','Personal details')}</h2>
+    <div class="photo">${avatar(p,true)}<div class="row">
+      <label class="small" style="cursor:pointer">${T('Foto hochladen','Upload photo')}<input type="file" id="p-photo" accept="image/*" hidden></label>
+      ${p.photo?`<button class="small danger" data-act="nophoto">${T('Foto entfernen','Remove photo')}</button>`:''}</div></div>
+    <div class="grid2">${fld('first',T('Vorname','First name'))}${fld('last',T('Nachname','Last name'))}
+    ${fld('empNo',T('Personalnummer','Employee no.'))}${fld('position',T('Position / Tätigkeit','Position / role'))}
+    ${fld('dept',T('Abteilung','Department'))}${fld('company',T('Firma','Company'))}
+    ${fld('supervisor',T('Vorgesetzte/r','Supervisor'))}${fld('email',T('E-Mail Vorgesetzte/r','Supervisor email'),'email')}</div>
+  </section>
+  <section class="card">
+    <h2>${T('Vertrag & Arbeitszeit','Contract & working time')}</h2>
+    <div class="grid2">${sel('contract',T('Vertragsart','Contract type'),CONTRACTS)}${sel('term',T('Laufzeit','Term'),TERMS)}
+    ${fld('startDate',T('Eintrittsdatum','Start date'),'date')}${fld('weekly',T('Wochenstunden laut Vertrag','Weekly hours (contract)'),'number','min="0" max="60" step="0.5" inputmode="decimal"')}</div>
+    <div class="f"><span class="lbl">${T('Arbeitstage','Working days')}</span><div class="chips">${[1,2,3,4,5,6,0].map(d=>`<button data-wd="${d}" aria-pressed="${p.workdays.includes(d)}">${T(days[d],daysE[d])}</button>`).join('')}</div></div>
+    <p class="note">${T('Soll pro Arbeitstag','Target per workday')}: <b>${fmt(dailyTarget())}</b></p>
+    <div class="grid2">${fld('vacYear',T('Urlaubstage pro Jahr','Vacation days per year'),'number','min="0" max="60" inputmode="numeric"')}${fld('vacCarry',T('Resturlaub Vorjahr','Vacation carried over'),'number','min="0" max="60" inputmode="numeric"')}
+    ${fld('otOpen',T('Überstunden-Übertrag (Std.)','Overtime carried over (h)'),'number','step="0.25" inputmode="decimal"')}${fld('trackFrom',T('Zeiterfassung ab','Tracking since'),'date')}
+    ${sel('state',T('Bundesland (Feiertage)','State (public holidays)'),STATES)}${fld('remindOut',T('Erinnerung „Feierabend vergessen?“ ab','"Forgot to clock out?" reminder at'),'time')}</div>
+  </section>
+  <section class="card">
+    <h2>${T('Pausenplan','Break plan')}</h2>
+    <div id="plan">${p.plan.map((pl,i)=>`<div class="ev" data-pl="${i}" style="grid-template-columns:minmax(104px,1.2fr) minmax(0,1.2fr) minmax(60px,.7fr) auto"><input type="time" value="${pl.at}" data-k="at"><select data-k="t"><option value="break"${pl.t==='break'?' selected':''}>${T('Pause','Break')}</option><option value="lunch"${pl.t==='lunch'?' selected':''}>${T('Mittag','Lunch')}</option></select><input type="number" min="5" max="120" value="${pl.min}" data-k="min" aria-label="min"><button class="small danger" data-act="plandel" data-i="${i}">✕</button></div>`).join('')}</div>
+    <button class="small" data-act="planadd">+ ${T('Pause','Break')}</button>
+  </section>
+  <section class="card">
+    <h2>${T('Benutzer','Users')}</h2>
+    <div class="ulist">${Object.values(S.users).map(u=>`<button data-user="${u.id}" aria-current="${u.id===S.cur}">${avatar(u.profile)}<span><b>${esc(fullName(u.profile))}</b><br><small style="color:var(--mute)">${esc(u.profile.position||'')}${u.profile.empNo?' · '+esc(u.profile.empNo):''}</small></span></button>`).join('')}</div>
+    <div class="row between" style="margin-top:12px"><button class="small primary" data-act="newuser">+ ${T('Neuen Benutzer anlegen','Create new user')}</button>
+    ${Object.keys(S.users).length>1?`<button class="small danger" data-act="deluser">${T('Diesen Benutzer löschen','Delete this user')}</button>`:''}</div>
+    <p class="note">${T('Jeder Benutzer hat eigene Zeiten, eigenes Profil und eigene Excel-Berichte.','Each user has their own times, profile and Excel reports.')}</p>
+  </section>`;
+  $('p-photo').onchange=uploadPhoto;
+}
+function setProfile(key,val){const p=P();if(['weekly','vacYear','vacCarry','otOpen'].includes(key))val=val===''?0:+val;p[key]=val;save();renderChrome();
+  if(key==='weekly'){const n=document.querySelector('.note b');if(n)n.textContent=fmt(dailyTarget())}}
+function uploadPhoto(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{
+  const s=Math.min(img.width,img.height),c=document.createElement('canvas');c.width=c.height=256;
+  c.getContext('2d').drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,256,256);P().photo=c.toDataURL('image/jpeg',.85);save();render();toast(T('Foto gespeichert','Photo saved'))};img.src=r.result};r.readAsDataURL(f)}
+
+/* ---------- backup ---------- */
+function backup(){P().lastBackup=Date.now();save();saveFile('Arbeitszeit_Sicherung_'+keyOf(new Date())+'.json',new Blob([JSON.stringify(S)],{type:'application/json'}));toast(T('Sicherung gespeichert','Backup saved'));render()}
+async function restore(e){const f=e.target.files[0];if(!f)return;
+  try{const o=JSON.parse(await f.text());
+    if(o.users){for(const u of Object.values(o.users)){const ex=S.users[u.id];if(!ex)S.users[u.id]=u;else{ex.profile=Object.assign(ex.profile,u.profile);for(const d of Object.values(u.days||{})){const l=ex.days[d.date];if(!l||(d.updated||0)>=(l.updated||0))ex.days[d.date]=d}}}}
+    else if(o.days){for(const d of Object.values(o.days)){const l=D()[d.date];if(!l||(d.updated||0)>=(l.updated||0))D()[d.date]=d}}
+    else throw 0;
+    load2();save();render();toast(T('Sicherung geladen','Backup loaded'))}catch(err){toast(T('Ungültige Datei','Invalid file'))}e.target.value=''}
+function load2(){for(const u of Object.values(S.users))u.profile=Object.assign(defProfile(),u.profile);if(!S.users[S.cur])S.cur=Object.keys(S.users)[0]}
+
+/* ---------- excel ---------- */
+function buildXlsx(){
+  if(!window.XLSX){toast(T('Excel-Bibliothek nicht geladen','Excel library not loaded'));return null}
+  const p=P(),m=month,s=monthStats(m),mid=parseKey(m+'-15');
+  const monthName=mid.toLocaleDateString('de-DE',{month:'long',year:'numeric'})+' / '+mid.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+  const H=['Datum / Date','Tag / Day','Art / Type','Beginn / Start','Pausen / Breaks','Mittag / Lunch','Ende / End','Pausen ges. / Total breaks','Anwesenheit / At work','Soll / Target','Ist / Actual','+/−','Bemerkung / Note'];
+  const NC=H.length,C={ink:'141210',acc:'269282',band:'16191A',stone:'E7E4DF',alt:'F6F4F1',wk:'EDEAE5',week:'DCEFEB',line:'C9C3BA',mute:'6B655D',white:'FFFFFF',red:'B3261E',green:'1F6B3A'};
+  const bd=(c=C.line)=>({style:'thin',color:{rgb:c}}),box={top:bd(),bottom:bd(),left:bd(),right:bd()};
+  const font=(o={})=>Object.assign({name:'Calibri',sz:11,color:{rgb:C.ink}},o);
+  const cell=(v,st)=>({v:v??'',t:typeof v==='number'?'n':'s',s:st});
+  const blank=()=>Array.from({length:NC},()=>cell('',{}));
+  const rows=[],heights=[],merges=[];let r;
+  r=blank();for(let i=0;i<NC;i++)r[i]=cell('',{fill:{fgColor:{rgb:C.band}}});
+  r[2]=cell('Arbeitszeitnachweis / Monthly Timesheet',{font:font({sz:18,bold:true,color:{rgb:C.white}}),fill:{fgColor:{rgb:C.band}},alignment:{vertical:'center',indent:1}});
+  rows.push(r);heights.push(46);merges.push([0,2,0,NC-1]);
+  r=blank();for(let i=0;i<NC;i++)r[i]=cell('',{fill:{fgColor:{rgb:C.acc}}});rows.push(r);heights.push(4);merges.push([1,0,1,NC-1]);
+  rows.push(blank());heights.push(8);
+  const lab=font({bold:true,color:{rgb:C.mute},sz:10}),val=font({bold:true,sz:11});
+  const contract=T(...CONTRACTS[p.contract]).toString();
+  const left=[['Mitarbeiter / Employee',fullName(p)],['Personalnr. / Employee no.',p.empNo],['Position / Abteilung',[p.position,p.dept].filter(Boolean).join(' · ')],['Vertrag / Contract',CONTRACTS[p.contract][0]+' / '+CONTRACTS[p.contract][1]+' · '+p.weekly+' Std./Woche'],['Vorgesetzte/r / Supervisor',p.supervisor],['Monat / Month',monthName]];
+  const right=[['Soll / Target',fmt(s.soll)],['Ist / Actual',fmt(s.ist)],['Differenz / Difference',fmtS(s.diff)],['Überstunden-Saldo / Overtime balance',fmtS(s.bal)],['Urlaub Monat · Rest Jahr / Vacation month · left',s.vac+' · '+s.vacLeft],['Krankheitstage / Sick days',String(s.sick)]];
+  for(let i=0;i<left.length;i++){r=blank();const R=rows.length;
+    r[0]=cell(left[i][0],{font:lab,alignment:{vertical:'center'}});r[2]=cell(left[i][1]||'',{font:val,alignment:{vertical:'center'}});
+    r[7]=cell(right[i][0],{font:lab,alignment:{vertical:'center'}});r[11]=cell(right[i][1],{font:font({bold:true,sz:11,color:{rgb:i===2||i===3?(right[i][1].startsWith('-')?C.red:C.green):C.ink}}),alignment:{horizontal:'right',vertical:'center'}});
+    merges.push([R,0,R,1],[R,2,R,6],[R,7,R,10],[R,11,R,12]);rows.push(r);heights.push(18)}
+  if(p.company){r=blank();r[0]=cell(p.company,{font:font({sz:9,color:{rgb:C.mute}})});rows.push(r);heights.push(14)}
+  rows.push(blank());heights.push(8);
+  rows.push(H.map(h=>cell(h,{font:font({bold:true,color:{rgb:C.white},sz:9}),fill:{fgColor:{rgb:C.ink}},alignment:{horizontal:'center',vertical:'center',wrapText:true},border:{top:bd(C.ink),bottom:bd(C.ink),left:bd('3A3530'),right:bd('3A3530')}})));heights.push(32);
+  let wk=null,acc={soll:0,ist:0,gross:0,brk:0};
+  const weekRow=()=>{if(wk===null||(!acc.soll&&!acc.ist&&!acc.gross))return;const R=rows.length,st=(o={})=>Object.assign({font:font({bold:true,sz:10}),fill:{fgColor:{rgb:C.week}},border:box,alignment:{horizontal:'center',vertical:'center'}},o);
+    const d=acc.ist-acc.soll;r=Array.from({length:NC},()=>cell('',st()));r[0]=cell('KW / Week '+wk,st({alignment:{horizontal:'left',vertical:'center',indent:1}}));
+    r[7]=cell(fmt(acc.brk),st());r[8]=cell(fmt(acc.gross),st());r[9]=cell(fmt(acc.soll),st());r[10]=cell(fmt(acc.ist),st());r[11]=cell(fmtS(d),st({font:font({bold:true,sz:10,color:{rgb:d<0?C.red:C.green}})}));
+    merges.push([R,0,R,6]);rows.push(r);heights.push(18)};
+  for(const x of s.rows){
+    const w=isoWeek(x.k);if(w!==wk){weekRow();wk=w;acc={soll:0,ist:0,gross:0,brk:0}}
+    if(x.counted){acc.soll+=x.target;acc.ist+=x.ist}if(x.type==='work'){acc.gross+=x.c.gross;acc.brk+=x.c.brk+x.c.lunch}
+    const dt=parseKey(x.k),idx=+x.k.slice(8),fill={fgColor:{rgb:!x.wd?C.wk:(idx%2?C.white:C.alt)}};
+    const st=(o={})=>Object.assign({fill,border:box,font:font({sz:10,color:{rgb:!x.wd&&!x.type?C.mute:C.ink}}),alignment:{horizontal:'center',vertical:'center'}},o);
+    const L={horizontal:'left',vertical:'center',wrapText:true},isW=x.type==='work';
+    const art=x.missing?'fehlt / missing':x.type?TYPES[x.type][0]+' / '+TYPES[x.type][1]:'';
+    const note=[x.hol&&x.type!=='work'?x.hol:'',x.note].filter(Boolean).join(' · ');
+    const showDiff=x.counted&&(x.type||x.missing||x.target);
+    rows.push([cell(dt.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'}),st()),
+      cell(dt.toLocaleDateString('de-DE',{weekday:'short'})+' / '+dt.toLocaleDateString('en-GB',{weekday:'short'}),st()),
+      cell(art,st({font:font({sz:10,color:{rgb:x.missing?C.red:C.ink},bold:x.missing})})),
+      cell(isW?x.c.start:'',st()),cell(isW?x.c.breaks.join(', '):'',st({alignment:L})),cell(isW?x.c.lunches.join(', '):'',st()),cell(isW?x.c.end:'',st()),
+      cell(isW&&(x.c.brk+x.c.lunch)?fmt(x.c.brk+x.c.lunch):'',st()),cell(isW?fmt(x.c.gross):'',st()),
+      cell(x.target?fmt(x.target):'',st()),cell(x.type||x.missing?fmt(x.ist):'',st({font:font({sz:10,bold:true})})),
+      cell(showDiff?fmtS(x.diff):'',st({font:font({sz:10,bold:true,color:{rgb:x.diff<0?C.red:C.green}})})),cell(note,st({alignment:L}))]);heights.push(18);
+  }
+  weekRow();
+  const ts=(o={})=>Object.assign({font:font({bold:true,sz:11}),fill:{fgColor:{rgb:C.stone}},alignment:{horizontal:'center',vertical:'center'},border:{top:{style:'medium',color:{rgb:C.ink}},bottom:{style:'medium',color:{rgb:C.ink}},left:bd(),right:bd()}},o);
+  const R=rows.length;r=Array.from({length:NC},()=>cell('',ts()));
+  r[0]=cell('Summe / Total',ts({alignment:{horizontal:'left',vertical:'center',indent:1}}));r[2]=cell(s.work+' Arbeitstage / workdays',ts());
+  r[7]=cell(fmt(s.brk),ts());r[8]=cell(fmt(s.gross),ts());r[9]=cell(fmt(s.soll),ts());r[10]=cell(fmt(s.ist),ts({font:font({bold:true,sz:12,color:{rgb:C.acc}})}));r[11]=cell(fmtS(s.diff),ts({font:font({bold:true,sz:11,color:{rgb:s.diff<0?C.red:C.green}})}));
+  merges.push([R,0,R,1],[R,2,R,6]);rows.push(r);heights.push(24);
   rows.push(blank(),blank(),blank());heights.push(14,30,14);
-  const sig=(txt)=>cell(txt,{font:font({sz:10,color:{rgb:C.mute}}),border:{top:{style:'thin',color:{rgb:C.ink}}},alignment:{horizontal:'left',vertical:'top'}});
-  r=blank();r[0]=sig('Datum, Unterschrift Mitarbeiter / Date, employee signature');r[1]=sig('');r[2]=sig('');r[3]=sig('');
-  r[7]=sig('Datum, Unterschrift Vorgesetzter / Date, supervisor signature');r[8]=sig('');r[9]=sig('');r[10]=sig('');r[11]=sig('');rows.push(r);heights.push(18);
-  const sigRow=rows.length-1;
-  r=blank();r[0]=cell('Erstellt mit / Created with Arbeitszeit · Work time – '+new Date().toLocaleDateString('de-DE'),{font:font({sz:9,italic:true,color:{rgb:C.mute}})});rows.push(r);heights.push(16);
+  const sig=t=>cell(t,{font:font({sz:9,color:{rgb:C.mute}}),border:{top:{style:'thin',color:{rgb:C.ink}}},alignment:{horizontal:'left',vertical:'top'}});
+  const SR=rows.length;r=blank();for(let i=0;i<=5;i++)r[i]=sig(i?'':'Datum, Unterschrift Mitarbeiter / Date, employee signature');for(let i=7;i<NC;i++)r[i]=sig(i>7?'':'Datum, Unterschrift Vorgesetzte/r / Date, supervisor signature');
+  merges.push([SR,0,SR,5],[SR,7,SR,NC-1]);rows.push(r);heights.push(18);
+  r=blank();r[0]=cell('Erstellt mit / Created with Arbeitszeit · Work time – '+new Date().toLocaleDateString('de-DE')+' · Feiertage / Holidays: '+STATES[p.state],{font:font({sz:8,italic:true,color:{rgb:C.mute}})});rows.push(r);heights.push(14);
   const ws=XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols']=[12,11,9,24,10,13,10,9,12,10,10,28].map(w=>({wch:w}));
+  ws['!cols']=[11,10,15,8,22,12,10,10,10,8,8,8,26].map(w=>({wch:w}));
   ws['!rows']=heights.map(h=>({hpt:h}));
-  ws['!merges']=[{s:{r:0,c:2},e:{r:0,c:NC-1}},{s:{r:1,c:0},e:{r:1,c:NC-1}},{s:{r:3,c:0},e:{r:3,c:1}},{s:{r:4,c:0},e:{r:4,c:1}},{s:{r:3,c:2},e:{r:3,c:5}},{s:{r:4,c:2},e:{r:4,c:5}},{s:{r:3,c:7},e:{r:3,c:9}},{s:{r:4,c:7},e:{r:4,c:9}},{s:{r:3,c:10},e:{r:3,c:11}},{s:{r:4,c:10},e:{r:4,c:11}},{s:{r:totalRow,c:0},e:{r:totalRow,c:1}},{s:{r:totalRow,c:2},e:{r:totalRow,c:3}},{s:{r:sigRow,c:0},e:{r:sigRow,c:4}},{s:{r:sigRow,c:7},e:{r:sigRow,c:11}}];
+  ws['!merges']=merges.map(([r1,c1,r2,c2])=>({s:{r:r1,c:c1},e:{r:r2,c:c2}}));
   ws['!margins']={left:0.4,right:0.4,top:0.5,bottom:0.5,header:0.2,footer:0.2};
   const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Arbeitszeit - Timesheet');
   let buf=XLSX.write(wb,{bookType:'xlsx',type:'array'});
-  /* print setup: A4 landscape, fit all columns on one page width */
-  try{const z=XLSX.CFB.read(new Uint8Array(buf),{type:'array'}),f=z.FileIndex[z.FullPaths.findIndex(p=>p.endsWith('xl/worksheets/sheet1.xml'))];
-    let x=new TextDecoder().decode(f.content);
-    if(!/<sheetPr/.test(x))x=x.replace(/(<worksheet[^>]*>)/,'$1<sheetPr><pageSetUpPr fitToPage="1"/></sheetPr>');
-    x=x.replace(/(<pageMargins[^>]*\/>)/,'$1<pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/>');
-    /* company logo in the title band */
-    const png=Uint8Array.from(atob(LOGO.split(',')[1]),ch=>ch.charCodeAt(0)),E=914400/96;
-    x=x.replace('</worksheet>','<drawing r:id="rIdLogo"/></worksheet>');
-    if(!/xmlns:r=/.test(x))x=x.replace('<worksheet ','<worksheet xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" ');
-    const enc=v=>new TextEncoder().encode(v),get=p=>{const i=z.FullPaths.findIndex(q=>q.endsWith(p));return i<0?null:z.FileIndex[i]};
-    const rel='<Relationship Id="rIdLogo" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing" Target="../drawings/drawing1.xml"/>';
-    const sr=get('xl/worksheets/_rels/sheet1.xml.rels');
-    if(sr){sr.content=enc(new TextDecoder().decode(sr.content).replace('</Relationships>',rel+'</Relationships>'));sr.size=sr.content.length}
-    else XLSX.CFB.utils.cfb_add(z,'xl/worksheets/_rels/sheet1.xml.rels',enc('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+rel+'</Relationships>'));
-    const w=Math.round(110*E),h=Math.round(45*E),off=Math.round(6*E);
-    XLSX.CFB.utils.cfb_add(z,'xl/drawings/drawing1.xml',enc('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><xdr:oneCellAnchor><xdr:from><xdr:col>0</xdr:col><xdr:colOff>'+off+'</xdr:colOff><xdr:row>0</xdr:row><xdr:rowOff>'+Math.round(8*E)+'</xdr:rowOff></xdr:from><xdr:ext cx="'+w+'" cy="'+h+'"/><xdr:pic><xdr:nvPicPr><xdr:cNvPr id="2" name="Logo"/><xdr:cNvPicPr><a:picLocks noChangeAspect="1"/></xdr:cNvPicPr></xdr:nvPicPr><xdr:blipFill><a:blip r:embed="rIdImg"/><a:stretch><a:fillRect/></a:stretch></xdr:blipFill><xdr:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="'+w+'" cy="'+h+'"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></xdr:spPr></xdr:pic><xdr:clientData/></xdr:oneCellAnchor></xdr:wsDr>'));
-    XLSX.CFB.utils.cfb_add(z,'xl/drawings/_rels/drawing1.xml.rels',enc('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rIdImg" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/logo.png"/></Relationships>'));
-    XLSX.CFB.utils.cfb_add(z,'xl/media/logo.png',png);
-    const ct=get('[Content_Types].xml');let cx=new TextDecoder().decode(ct.content);
-    if(!/Extension="png"/.test(cx))cx=cx.replace(/(<Types[^>]*>)/,'$1<Default Extension="png" ContentType="image/png"/>');
-    cx=cx.replace('</Types>','<Override PartName="/xl/drawings/drawing1.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/></Types>');
-    ct.content=enc(cx);ct.size=ct.content.length;
-    f.content=new TextEncoder().encode(x);f.size=f.content.length;
-    buf=XLSX.CFB.write(z,{type:'array',fileType:'zip'})}catch(e){}
-  const fname=($('name').value||'Timesheet').replace(/\s+/g,'_')+'_Arbeitszeit_'+m+'.xlsx';
-  saveFile(fname,new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));toast(t('fileOk'))
+  try{buf=postProcess(buf)}catch(e){console.error(e)}
+  const fname=(fullName(p).replace(/\s+/g,'_')||'Mitarbeiter')+'_Arbeitszeit_'+m+'.xlsx';
+  return new File([buf],fname,{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+/* A4 landscape fit-to-width and the company logo, added straight into the xlsx package */
+function postProcess(buf){
+  const z=XLSX.CFB.read(new Uint8Array(buf),{type:'array'}),enc=v=>new TextEncoder().encode(v),dec=v=>new TextDecoder().decode(v);
+  const get=p=>{const i=z.FullPaths.findIndex(q=>q.endsWith(p));return i<0?null:z.FileIndex[i]};
+  const f=get('xl/worksheets/sheet1.xml');let x=dec(f.content);
+  if(!/<sheetPr/.test(x))x=x.replace(/(<worksheet[^>]*>)/,'$1<sheetPr><pageSetUpPr fitToPage="1"/></sheetPr>');
+  x=x.replace(/(<pageMargins[^>]*\/>)/,'$1<pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/>');
+  if(!/xmlns:r=/.test(x))x=x.replace('<worksheet ','<worksheet xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" ');
+  x=x.replace('</worksheet>','<drawing r:id="rIdLogo"/></worksheet>');
+  f.content=enc(x);f.size=f.content.length;
+  const png=Uint8Array.from(atob(LOGO.split(',')[1]),ch=>ch.charCodeAt(0)),E=9525;
+  const rel='<Relationship Id="rIdLogo" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing" Target="../drawings/drawing1.xml"/>';
+  const sr=get('xl/worksheets/_rels/sheet1.xml.rels');
+  if(sr){sr.content=enc(dec(sr.content).replace('</Relationships>',rel+'</Relationships>'));sr.size=sr.content.length}
+  else XLSX.CFB.utils.cfb_add(z,'xl/worksheets/_rels/sheet1.xml.rels',enc('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+rel+'</Relationships>'));
+  const w=110*E,h=45*E;
+  XLSX.CFB.utils.cfb_add(z,'xl/drawings/drawing1.xml',enc('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><xdr:oneCellAnchor><xdr:from><xdr:col>0</xdr:col><xdr:colOff>'+6*E+'</xdr:colOff><xdr:row>0</xdr:row><xdr:rowOff>'+8*E+'</xdr:rowOff></xdr:from><xdr:ext cx="'+w+'" cy="'+h+'"/><xdr:pic><xdr:nvPicPr><xdr:cNvPr id="2" name="Logo"/><xdr:cNvPicPr><a:picLocks noChangeAspect="1"/></xdr:cNvPicPr></xdr:nvPicPr><xdr:blipFill><a:blip r:embed="rIdImg"/><a:stretch><a:fillRect/></a:stretch></xdr:blipFill><xdr:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="'+w+'" cy="'+h+'"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></xdr:spPr></xdr:pic><xdr:clientData/></xdr:oneCellAnchor></xdr:wsDr>'));
+  XLSX.CFB.utils.cfb_add(z,'xl/drawings/_rels/drawing1.xml.rels',enc('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rIdImg" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/logo.png"/></Relationships>'));
+  XLSX.CFB.utils.cfb_add(z,'xl/media/logo.png',png);
+  const ct=get('[Content_Types].xml');let cx=dec(ct.content);
+  if(!/Extension="png"/.test(cx))cx=cx.replace(/(<Types[^>]*>)/,'$1<Default Extension="png" ContentType="image/png"/>');
+  cx=cx.replace('</Types>','<Override PartName="/xl/drawings/drawing1.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/></Types>');
+  ct.content=enc(cx);ct.size=ct.content.length;
+  return XLSX.CFB.write(z,{type:'array',fileType:'zip'});
+}
+async function share(){
+  const f=buildXlsx();if(!f)return;const p=P();
+  const text=T('Arbeitszeitnachweis ','Timesheet ')+month+' – '+fullName(p);
+  try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:text,text});return}}catch(e){if(e&&e.name==='AbortError')return}
+  saveFile(f.name,f);toast(T('Teilen nicht möglich – Datei wurde heruntergeladen','Sharing not available – file downloaded'));
 }
 
-/* wiring */
-$('b-in').onclick=()=>punch('in');$('b-break').onclick=()=>punch('break');$('b-lunch').onclick=()=>punch('lunch');
-$('b-back').onclick=()=>punch('back');$('b-out').onclick=()=>punch('out');
-$('b-undo').onclick=()=>{const k=keyOf(new Date()),d=days[k];if(!d||!d.ev.length)return;
-  const last=sorted(d.ev).pop();d.ev.splice(d.ev.indexOf(last),1);d.updated=Date.now();if(!d.ev.length)delete days[k];persist(k);render();toast(t('undone'))};
-$('b-edit-today').onclick=()=>openEditor(keyOf(new Date()));
-$('b-addday').onclick=()=>openEditor(keyOf(new Date()));
-$('mbody').addEventListener('click',e=>{const tr=e.target.closest('tr[data-d]');if(tr)openEditor(tr.dataset.d)});
-$('month').onchange=renderMonth;
-$('name').oninput=()=>{meta.name=$('name').value;saveLocal()};
-document.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{meta.ui=b.dataset.l;saveLocal();applyLang()});
-$('b-xlsx').onclick=exportXlsx;
+/* ---------- onboarding ---------- */
+function renderWelcome(){
+  $('view').innerHTML=`<section class="card"><h2>${T('Willkommen!','Welcome!')}</h2><p>${T('Lege zuerst deinen Benutzer an.','First, create your user.')}</p>
+  <div class="grid2"><div class="f"><label for="w-first">${T('Vorname','First name')}</label><input id="w-first"></div><div class="f"><label for="w-last">${T('Nachname','Last name')}</label><input id="w-last"></div></div>
+  <button class="small primary" id="w-go">${T('Benutzer anlegen','Create user')}</button></section>`;
+  $('w-go').onclick=()=>{const f=$('w-first').value.trim();if(!f){toast(T('Bitte Vorname eingeben','Please enter a first name'));return}
+    S.cur=newUser(f,$('w-last').value.trim());save();view='profile';render();toast(T('Benutzer angelegt – jetzt Vertrag ausfüllen','User created – now fill in your contract'))};
+}
 
-loadLocal();
-const n=new Date();$('month').value=n.getFullYear()+'-'+pad(n.getMonth()+1);
-$('name').value=meta.name||'';$('logo').src=LOGO;
-applyLang();setInterval(renderToday,10000);
+/* ---------- wiring ---------- */
+document.addEventListener('click',e=>{
+  const l=e.target.closest('[data-l]');if(l){S.ui=l.dataset.l;save();U()?render():(renderChrome(),renderWelcome());return}
+  const v=e.target.closest('[data-view]');if(v){if(!U())return;view=v.dataset.view;render();scrollTo(0,0);return}
+  if(e.target.closest('#who')&&U()){view='profile';render();return}
+  const pb=e.target.closest('[data-punch]');if(pb&&!pb.disabled){punch(pb.dataset.punch);return}
+  const wd=e.target.closest('[data-wd]');if(wd){const d=+wd.dataset.wd,a=P().workdays;const i=a.indexOf(d);i<0?a.push(d):a.splice(i,1);save();renderProfile();return}
+  const us=e.target.closest('[data-user]');if(us){S.cur=us.dataset.user;save();render();toast(fullName(P()));return}
+  const a=e.target.closest('[data-act]');if(!a)return;
+  const act=a.dataset.act;
+  if(act==='edit')openEditor(a.dataset.d);
+  else if(act==='undo'){const k=activeKey(),d=D()[k];if(!d||!d.ev.length)return;const last=sorted(d.ev).pop();d.ev.splice(d.ev.indexOf(last),1);d.updated=Date.now();if(!d.ev.length&&!d.note)delete D()[k];save();render();toast(T('Letzter Eintrag entfernt','Last entry removed'))}
+  else if(act==='notif'){(async()=>{try{await Notification.requestPermission()}catch(err){}render()})()}
+  else if(act==='backup')backup();
+  else if(act==='xlsx'){const f=buildXlsx();if(f){saveFile(f.name,f);toast(T('Datei gespeichert','File saved'))}}
+  else if(act==='share')share();
+  else if(act==='nophoto'){P().photo='';save();render()}
+  else if(act==='planadd'){P().plan.push({at:'16:00',t:'break',min:15});save();renderProfile()}
+  else if(act==='plandel'){P().plan.splice(+a.dataset.i,1);save();renderProfile()}
+  else if(act==='newuser'){S.cur=newUser(T('Neuer','New'),T('Benutzer','user'));save();render();scrollTo(0,0);toast(T('Neuer Benutzer angelegt','New user created'))}
+  else if(act==='deluser'){if(a.dataset.sure!=='1'){a.dataset.sure='1';a.textContent=T('Wirklich löschen? Alle Zeiten gehen verloren – nochmal tippen','Really delete? All times will be lost – tap again');return}
+    delete S.users[S.cur];S.cur=Object.keys(S.users)[0];save();render();toast(T('Benutzer gelöscht','User deleted'))}
+});
+document.addEventListener('change',e=>{
+  const pf=e.target.closest('[data-p]');if(pf){setProfile(pf.dataset.p,pf.value);if(['state','trackFrom','first','last'].includes(pf.dataset.p))renderChrome();return}
+  const pl=e.target.closest('[data-pl]');if(pl){const it=P().plan[+pl.dataset.pl],k=e.target.dataset.k;if(it&&k){it[k]=k==='min'?+e.target.value:e.target.value;P().plan.sort((a,b)=>toMin(a.at)-toMin(b.at));save();renderProfile()}}
+});
+$('dlg').addEventListener('click',e=>{if(e.target===$('dlg'))closeDlg()});
 
-$('b-backup').onclick=()=>{saveFile('Arbeitszeit_Backup_'+keyOf(new Date())+'.json',new Blob([JSON.stringify({days,meta},null,1)],{type:'application/json'}));toast(t('fileOk'))};
-$('f-restore').onchange=async e=>{const f=e.target.files[0];if(!f)return;
-  try{const o=JSON.parse(await f.text());if(!o.days)throw 0;
-    for(const d of Object.values(o.days)){const l=days[d.date];if(!l||(d.updated||0)>=(l.updated||0))days[d.date]=d}
-    saveLocal();render();toast(t('restored'))}catch(err){toast(t('badFile'))}e.target.value=''};
-function notifLabel(){const b=$('b-notif');if(!('Notification' in window)){b.style.display='none';return}
-  b.textContent=Notification.permission==='granted'?t('notifOk'):Notification.permission==='denied'?t('notifNo'):t('notifOn')}
-$('b-notif').onclick=async()=>{try{await Notification.requestPermission()}catch(e){}notifLabel()};
-document.querySelectorAll('[data-l]').forEach(b=>b.addEventListener('click',notifLabel));
-notifLabel();
+load();$('logo').src=LOGO;
+if(U())render();else{renderChrome();renderWelcome()}
+setInterval(()=>{if(U()&&view==='today'&&!$('dlg').classList.contains('on'))renderToday()},15000);
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(r=>{swReg=r}).catch(()=>{})}
-setSync('local');
 }
 </script>
 </body>
