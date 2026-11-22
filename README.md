@@ -23,6 +23,7 @@ A simple time-tracking app for Android phones, in German and English. It records
 
 ## Changelog
 
+- **v1.0:** MIT License added, unused Excel library removed, first official release
 - **New address:** repository renamed to `worktime`, app moved to https://ario-ghs.github.io/worktime/
 - **PDF sharing:** "Send to supervisor" now shares a PDF timesheet; new "Download PDF" button
 - **Profiles and more:** user profiles with photo and contract, overtime, absences and holidays, ArbZG warnings, reminders, weekly totals, night shifts, backup reminder
@@ -60,3 +61,7 @@ All data is stored **only on your phone**. Nothing is sent to a server, and noth
 | `jspdf.umd.min.js`, `jspdf.plugin.autotable.min.js` | PDF export libraries ([jsPDF](https://github.com/parallax/jsPDF), [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable), MIT) |
 | `icon-192.png`, `icon-512.png` | App icons |
 | `logo.png` | Company logo |
+
+## License
+
+Released under the [MIT License](LICENSE). The GST logo belongs to its owner and is not covered by this license.
