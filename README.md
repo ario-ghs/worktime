@@ -2,7 +2,7 @@
 
 A simple time-tracking app for Android phones, in German and English. It records when you clock in, take breaks, have lunch, return to work and finish the day. At the end of the month it creates an Excel timesheet you can send to your supervisor.
 
-**Open the app:** https://ario-ghs.github.io/Times-Apply-for-work-/
+**Open the app:** https://ario-ghs.github.io/worktime/
 
 ## Features
 
@@ -17,8 +17,17 @@ A simple time-tracking app for Android phones, in German and English. It records
 - **User profiles:** photo, employee number, position, department, contract type, weekly hours, working days and vacation days; several users on one phone, each with their own data
 - **Monthly report:** weekly totals, missing days highlighted, vacation and sick-day counts
 - **Excel export:** bilingual German/English timesheet with company logo, employee and contract details, monthly summary, weekly totals and signature fields, set up for printing on A4 landscape
-- **Send to supervisor:** share the Excel file directly through email, WhatsApp or any other app
+- **PDF timesheet:** the same report as a one-page A4 PDF with logo, summary, weekly totals and signature fields
+- **Send to supervisor:** share the PDF directly through email, WhatsApp or any other app. The Excel file is saved to Downloads and can be attached from there
 - **Backup and restore:** save all data as a file and load it again, for example on a new phone
+
+## Changelog
+
+- **New address:** repository renamed to `worktime`, app moved to https://ario-ghs.github.io/worktime/
+- **PDF sharing:** "Send to supervisor" now shares a PDF timesheet; new "Download PDF" button
+- **Profiles and more:** user profiles with photo and contract, overtime, absences and holidays, ArbZG warnings, reminders, weekly totals, night shifts, backup reminder
+- **Branding:** GST logo and colors in the app and the Excel file
+- **First version:** clock in/out, break plan, daily total, monthly Excel export
 
 ## Install on Android
 
@@ -37,6 +46,7 @@ All data is stored **only on your phone**. Nothing is sent to a server, and noth
 ## Limitations
 
 - Notifications work while the app is open or was recently used. Android does not let web apps send scheduled notifications when they are fully closed. For guaranteed reminders, also set alarms in the phone's Clock app.
+- Android only lets web apps share certain file types (such as PDF) through the share menu, not Excel files. That is why the app shares a PDF and saves the Excel file to Downloads.
 - The Working Time Act warnings are a guide only and are not legal advice.
 
 ## Files
@@ -47,5 +57,6 @@ All data is stored **only on your phone**. Nothing is sent to a server, and noth
 | `manifest.json` | Makes the app installable |
 | `sw.js` | Offline support |
 | `xlsx.min.js` | Excel export library ([xlsx-js-style](https://github.com/gitbrent/xlsx-js-style), Apache-2.0) |
+| `jspdf.umd.min.js`, `jspdf.plugin.autotable.min.js` | PDF export libraries ([jsPDF](https://github.com/parallax/jsPDF), [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable), MIT) |
 | `icon-192.png`, `icon-512.png` | App icons |
 | `logo.png` | Company logo |
