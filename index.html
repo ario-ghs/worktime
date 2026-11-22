@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="de" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arbeitszeit · Work time</title>
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#c8371e"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: calm, practical, a tool used every day at the door of the workplace
+   IDEA: the paper punch card by the factory gate, stamped five times a day
+   PICTURE: the live clock and five big stamp buttons, today's card under it
+   COLOUR and TYPE: stone ground, black ink, brick accent; Schibsted Grotesk throughout
+   LAYOUT: one column, phone first; month table and export below */
+:root{color-scheme:light dark;--bg:light-dark(#e7e4df,#171513);--panel:light-dark(#fff,#221f1c);--ink:light-dark(#141210,#ece8e2);--mute:light-dark(#6b655d,#a39c92);--line:light-dark(#d3cec6,#3a3530);--brick:#c8371e;--ok:light-dark(#1f6b3a,#6cc18a);--amber:light-dark(#9a5b00,#e7a64a)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Schibsted Grotesk",system-ui,sans-serif;overflow-x:clip}
+.wrap{max-width:720px;margin:0 auto;padding:18px max(4vw,14px) 60px}
+h1{font-size:20px;margin:0;font-weight:800}
+h2{font-size:20px;margin:0 0 10px;font-weight:800}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.sync{font-size:13px;color:var(--mute)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:14px}
+.clock{font-size:clamp(52px,16vw,88px);font-weight:800;line-height:1.05;letter-spacing:1px;direction:ltr;text-align:center;font-variant-numeric:tabular-nums}
+.date{text-align:center;color:var(--mute)}
+.status{display:flex;justify-content:center;margin:10px 0 4px}
+.pill{padding:4px 14px;border-radius:99px;font-weight:600;font-size:15px;border:1px solid currentColor}
+.s-work{color:var(--ok)}.s-pause{color:var(--amber)}.s-off{color:var(--mute)}
+.btns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+.btn{font:inherit;font-weight:600;font-size:17px;min-height:58px;border-radius:12px;border:2px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;padding:6px 10px}
+.btn.main{background:var(--brick);border-color:var(--brick);color:#fff}
+.btn.wide{grid-column:1/-1}
+.btn:disabled{opacity:.28;cursor:not-allowed}
+.btn:focus-visible,.small:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--brick);outline-offset:2px}
+.small{font:inherit;font-size:14px;min-height:44px;padding:6px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.small.danger{color:var(--brick);border-color:var(--brick)}
+.small.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line)}
+.tl li:last-child{border:0}
+.t{direction:ltr;font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.sum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px;text-align:center}
+.sum b{display:block;font-size:22px;direction:ltr;font-variant-numeric:tabular-nums}
+.sum span{font-size:13px;color:var(--mute)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+input,select{font:inherit;font-size:16px;min-height:44px;padding:6px 10px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{font-size:13px;color:var(--mute);font-weight:600;text-align:start;border-bottom:2px solid var(--ink);padding:6px 4px}
+td{padding:9px 4px;border-bottom:1px solid var(--line)}
+tbody tr{cursor:pointer}tbody tr:hover{background:light-dark(#f4f1ec,#2a2622)}
+.num{direction:ltr;text-align:end;font-variant-numeric:tabular-nums;white-space:nowrap}
+tfoot td{font-weight:800;border-top:2px solid var(--ink);border-bottom:0}
+.empty{color:var(--mute);text-align:center;padding:16px 0}
+.note{font-size:13px;color:var(--mute);margin-top:8px}
+.toast{position:fixed;inset-inline:0;bottom:18px;margin:auto;width:max-content;max-width:90vw;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:10px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+.dlg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;z-index:5}
+.dlg.on{display:flex}
+.sheet{background:var(--panel);width:100%;max-width:720px;max-height:88vh;overflow:auto;border-radius:16px 16px 0 0;padding:18px}
+.lang{display:flex;gap:4px}.lang .small{min-height:36px;padding:4px 12px}.lang .small[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.alert{display:none;margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--brick);color:#fff;font-weight:600;text-align:center}.alert.on{display:block}.alert.info{background:transparent;color:var(--ink);border:2px solid var(--amber)}
+.plan{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:14px;color:var(--mute);justify-content:center}.plan .done{color:var(--ok)}.plan .now{color:var(--brick);font-weight:800}
+.total{text-align:center;margin:4px 0 14px;padding:12px;border-radius:12px;background:var(--ink);color:var(--bg)}.total b{display:block;font-size:30px;line-height:1.15}.total span{font-size:14px;opacity:.8}
+.ev{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto;gap:8px;margin-bottom:8px}
+label{font-size:14px;color:var(--mute)}
+@media(prefers-reduced-motion:reduce){.toast{transition:none}}
+@media(max-width:600px){table{font-size:13px}.hide-s{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1 data-i="app"></h1>
+    <div class="lang" role="group" aria-label="Sprache / Language"><button class="small" data-l="de">DE</button><button class="small" data-l="en">EN</button></div>
+  </div>
+  <div class="sync" id="sync"></div>
+
+  <section class="card">
+    <div class="clock" id="clock">--:--</div>
+    <div class="date" id="today"></div>
+    <div class="status"><span class="pill s-off" id="status"></span></div>
+    <div class="alert" id="alert" role="alert"></div>
+    <div class="btns">
+      <button class="btn main wide" id="b-in"></button>
+      <button class="btn" id="b-break" data-i="break"></button>
+      <button class="btn" id="b-lunch" data-i="lunch"></button>
+      <button class="btn wide" id="b-back" data-i="back"></button>
+      <button class="btn main wide" id="b-out" data-i="outBtn"></button>
+    </div>
+    <div class="row" style="margin-top:12px;justify-content:space-between">
+      <button class="small" id="b-undo" data-i="undo"></button>
+      <button class="small" id="b-edit-today" data-i="editToday"></button>
+    </div>
+    <div class="plan" id="plan"></div>
+    <div class="row" style="margin-top:10px;justify-content:center"><button class="small" id="b-notif" data-i="notifOn"></button></div>
+  </section>
+
+  <section class="card">
+    <h2 data-i="todayCard"></h2>
+    <div class="total"><span data-i="workedToday"></span><b id="s-total">0 Std. 0 Min.</b><span id="s-presence"></span></div>
+    <ul class="tl" id="tl"></ul>
+    <div class="sum">
+      <div><b id="s-work">0:00</b><span data-i="net"></span></div>
+      <div><b id="s-break">0:00</b><span data-i="breaks"></span></div>
+      <div><b id="s-lunch">0:00</b><span data-i="lunchT"></span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 data-i="monthly"></h2>
+    <div class="row">
+      <input type="month" id="month">
+      <input id="name" style="flex:1">
+    </div>
+    <div style="overflow-x:auto;margin-top:10px">
+      <table>
+        <thead><tr><th data-i="day"></th><th class="num" data-i="start"></th><th class="num" data-i="end"></th><th class="num hide-s" data-i="breaks"></th><th class="num hide-s" data-i="lunchT"></th><th class="num" data-i="net"></th></tr></thead>
+        <tbody id="mbody"></tbody>
+        <tfoot><tr><td id="m-days"></td><td></td><td></td><td class="hide-s"></td><td class="hide-s"></td><td class="num" id="m-total">0:00</td></tr></tfoot>
+      </table>
+    </div>
+    <p class="note" data-i="hint"></p>
+    <div class="row" style="justify-content:space-between;margin-top:8px">
+      <button class="small" id="b-addday" data-i="addDay"></button>
+      <button class="small primary" id="b-xlsx" data-i="excel"></button>
+    </div>
+    <div class="row" style="justify-content:space-between;margin-top:14px;border-top:1px solid var(--line);padding-top:12px">
+      <button class="small" id="b-backup" data-i="backup"></button>
+      <label class="small" style="display:inline-flex;align-items:center;cursor:pointer"><span data-i="restore"></span><input type="file" id="f-restore" accept=".json,application/json" hidden></label>
+    </div>
+    <p class="note" data-i="backupHint"></p>
+  </section>
+</div>
+
+<div class="dlg" id="dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-t">
+  <div class="sheet">
+    <h2 id="dlg-t" data-i="editDay"></h2>
+    <div class="row" style="margin-bottom:10px"><label for="d-date" data-i="date"></label><input type="date" id="d-date"></div>
+    <div id="d-evs"></div>
+    <button class="small" id="d-add" data-i="addEntry"></button>
+    <div style="margin-top:12px"><label for="d-note" data-i="noteL"></label><input id="d-note" style="width:100%"></div>
+    <div class="row" style="justify-content:space-between;margin-top:14px">
+      <button class="small danger" id="d-del" data-i="delDay"></button>
+      <div class="row"><button class="small" id="d-cancel" data-i="cancel"></button><button class="small primary" id="d-save" data-i="save"></button></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="xlsx.full.min.js"></script>
+<script>
+{
+const $=id=>document.getElementById(id);
+const I={
+de:{app:'Arbeitszeit',loc:'de-DE',in:'Arbeitsbeginn',inAgain:'Erneut einstempeln',break:'Pause beginnen',lunch:'Mittagspause beginnen',back:'Zurück zur Arbeit',outBtn:'Feierabend',out:'Arbeitsende',
+ evBreak:'Pause',evLunch:'Mittagspause',evBack:'Zurück',undo:'Letzten Eintrag rückgängig',editToday:'Heute bearbeiten',todayCard:'Heute',net:'Netto',breaks:'Pausen',lunchT:'Mittag',
+ monthly:'Monatsbericht',day:'Tag',start:'Beginn',end:'Ende',hint:'Zeile antippen, um einen Tag zu korrigieren. Fehlende Tage mit dem Button unten nachtragen.',addDay:'Tag hinzufügen / bearbeiten',excel:'Excel für diesen Monat',
+ editDay:'Tag bearbeiten',date:'Datum',addEntry:'+ Eintrag',noteL:'Bemerkung (erscheint in Excel)',delDay:'Ganzen Tag löschen',sure:'Sicher? Nochmal tippen',cancel:'Abbrechen',save:'Speichern',
+ sOff:'Noch nicht eingestempelt',sWork:'Bei der Arbeit',sBreak:'In der Pause',sLunch:'In der Mittagspause',sDone:'Feierabend für heute',
+ none:'Heute noch nichts erfasst.',noneM:'In diesem Monat noch keine Einträge.',days:n=>n+' Arbeitstage',name:'Ihr Name',
+ local:'Auf diesem Handy gespeichert',cloud:'Im Claude-Konto gespeichert ✓',syncing:'Synchronisiere…',saved:'Gespeichert',deleted:'Tag gelöscht',undone:'Letzter Eintrag entfernt',
+ notifOn:'Benachrichtigungen aktivieren',notifOk:'Benachrichtigungen aktiv ✓',notifNo:'Benachrichtigungen blockiert – in den Handy-Einstellungen erlauben',backup:'Sicherung speichern',restore:'Sicherung laden',backupHint:'Alle Daten bleiben nur auf diesem Handy. Speichere regelmäßig eine Sicherung.',restored:'Sicherung geladen',badFile:'Ungültige Datei',workedToday:'Heute gearbeitet (netto)',presence:(a,p)=>'Anwesend '+a+' · davon Pausen '+p,dur:(h,m)=>h+' Std. '+m+' Min.',dayDone:w=>'Feierabend! Heute gearbeitet: '+w,plan:'Pausenplan',min:'Min.',timeBreak:m=>'Zeit für deine Pause ('+m+' Min.) – „Pause beginnen“ tippen',timeLunch:m=>'Zeit für die Mittagspause ('+m+' Min.)',backAt:(h,r)=>'Zurück um '+h+' · noch '+r+' Min.',over:r=>'Pause ist vorbei – '+r+' Min. überzogen. „Zurück zur Arbeit“ tippen',pickDate:'Bitte Datum wählen',noData:'Keine Daten in diesem Monat',noLib:'Excel-Bibliothek nicht geladen – Internet prüfen',noDl:'Download hier nicht verfügbar – in claude.ai öffnen',fileOk:'Datei gespeichert',dlNo:'Download abgebrochen',dlErr:'Download fehlgeschlagen'},
+en:{app:'Work time',loc:'en-GB',in:'Clock in',inAgain:'Clock in again',break:'Start break',lunch:'Start lunch',back:'Back to work',outBtn:'Finish & go home',out:'Clock out',
+ evBreak:'Break',evLunch:'Lunch',evBack:'Back to work',undo:'Undo last entry',editToday:'Edit today',todayCard:'Today',net:'Net work',breaks:'Breaks',lunchT:'Lunch',
+ monthly:'Monthly report',day:'Day',start:'Start',end:'End',hint:'Tap a row to correct a day. Add missing days with the button below.',addDay:'Add / edit a day',excel:'Excel for this month',
+ editDay:'Edit day',date:'Date',addEntry:'+ Entry',noteL:'Note (shown in Excel)',delDay:'Delete whole day',sure:'Sure? Tap again',cancel:'Cancel',save:'Save',
+ sOff:'Not clocked in yet',sWork:'Working',sBreak:'On break',sLunch:'At lunch',sDone:'Done for today',
+ none:'Nothing recorded today yet.',noneM:'No entries this month yet.',days:n=>n+' working days',name:'Your name',
+ local:'Saved on this phone',cloud:'Saved to your Claude account ✓',syncing:'Syncing…',saved:'Saved',deleted:'Day deleted',undone:'Last entry removed',
+ notifOn:'Turn on notifications',notifOk:'Notifications on ✓',notifNo:'Notifications blocked – allow them in phone settings',backup:'Save backup',restore:'Load backup',backupHint:'All data stays on this phone only. Save a backup regularly.',restored:'Backup loaded',badFile:'Invalid file',workedToday:'Worked today (net)',presence:(a,p)=>'At work '+a+' · breaks '+p,dur:(h,m)=>h+' h '+m+' min',dayDone:w=>'Done! Worked today: '+w,plan:'Break plan',min:'min',timeBreak:m=>'Time for your break ('+m+' min) – tap “Start break”',timeLunch:m=>'Time for lunch ('+m+' min)',backAt:(h,r)=>'Back at '+h+' · '+r+' min left',over:r=>'Break is over – '+r+' min over. Tap “Back to work”',pickDate:'Please pick a date',noData:'No data this month',noLib:'Excel library not loaded – check internet',noDl:'Download not available here – open in claude.ai',fileOk:'File saved',dlNo:'Download cancelled',dlErr:'Download failed'}
+};
+const LS='timeclock.v1';
+/* daily break plan: start time, kind, length in minutes */
+const PLAN=[{at:'10:00',t:'break',min:15},{at:'12:00',t:'lunch',min:30},{at:'14:00',t:'break',min:15}];
+const DUR={break:15,lunch:30};
+let buzzed='';
+let swReg=null;
+function notify(msg){
+  try{navigator.vibrate&&navigator.vibrate([400,200,400])}catch(e){}
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  try{if(swReg)swReg.showNotification(t('app'),{body:msg,icon:'icon-192.png',vibrate:[400,200,400],tag:'pause'});else new Notification(t('app'),{body:msg})}catch(e){}
+}
+let days={};
+let meta={name:'Ario Samani',ui:'de'};
+let syncKey='local';
+const t=k=>I[meta.ui][k];
+const evName=e=>({in:t('in'),break:t('evBreak'),lunch:t('evLunch'),back:t('evBack'),out:t('out')})[e];
+
+const pad=n=>String(n).padStart(2,'0');
+const keyOf=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const hm=d=>pad(d.getHours())+':'+pad(d.getMinutes());
+const toMin=s=>{const[a,b]=s.split(':').map(Number);return a*60+b};
+const fmtL=m=>t('dur')(Math.floor(m/60),Math.round(m%60));
+const fmt=m=>Math.floor(m/60)+':'+pad(Math.round(m%60));
+
+function loadLocal(){try{const o=JSON.parse(localStorage.getItem(LS)||'{}');days=o.days||{};meta=Object.assign(meta,o.meta||{});if(!I[meta.ui])meta.ui='de'}catch(e){}}
+function saveLocal(){try{localStorage.setItem(LS,JSON.stringify({days,meta}))}catch(e){}}
+function setSync(k){syncKey=k;$('sync').textContent=t(k)}
+
+function sorted(ev){return [...ev].sort((a,b)=>toMin(a.at)-toMin(b.at))}
+function calc(day){
+  const r={gross:0,work:0,brk:0,lunch:0,start:'',end:'',breaks:[],lunches:[],state:'off'};
+  if(!day||!day.ev.length)return r;
+  let mode='off',since=0,sinceStr='';
+  for(const e of sorted(day.ev)){
+    const m=toMin(e.at);
+    if(mode==='work')r.work+=m-since;
+    if(mode==='break'){r.brk+=m-since;r.breaks.push(sinceStr+'–'+e.at)}
+    if(mode==='lunch'){r.lunch+=m-since;r.lunches.push(sinceStr+'–'+e.at)}
+    if(e.t==='in'&&!r.start)r.start=e.at;
+    if(e.t==='out')r.end=e.at;
+    mode=e.t==='in'||e.t==='back'?'work':e.t==='break'?'break':e.t==='lunch'?'lunch':'done';
+    since=m;sinceStr=e.at;
+  }
+  if(day.date===keyOf(new Date())){
+    const now=toMin(hm(new Date()));
+    if(mode==='work')r.work+=Math.max(0,now-since);
+    if(mode==='break')r.brk+=Math.max(0,now-since);
+    if(mode==='lunch')r.lunch+=Math.max(0,now-since);
+  }
+  r.gross=r.work+r.brk+r.lunch;r.state=mode;return r;
+}
+
+async function persist(date){
+  const d=days[date];saveLocal();
+
+}
+function toast(x){const el=$('toast');el.textContent=x;el.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>el.classList.remove('on'),2200)}
+
+function punch(k){
+  const now=new Date(),key=keyOf(now);
+  const d=days[key]||(days[key]={date:key,ev:[],note:''});
+  d.ev.push({t:k,at:hm(now)});d.updated=Date.now();
+  persist(key);render();
+  if(k==='out'){const msg=t('dayDone')(fmtL(calc(d).work));toast(msg);if(typeof notify==='function')notify(msg)}else toast(evName(k)+' — '+hm(now));
+}
+
+function applyLang(){
+  document.documentElement.lang=meta.ui;document.title=t('app');
+  document.querySelectorAll('[data-i]').forEach(el=>el.textContent=t(el.dataset.i));
+  document.querySelectorAll('[data-l]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===meta.ui));
+  $('name').placeholder=t('name');$('sync').textContent=t(syncKey);
+  const del=$('d-del');del.dataset.sure='';
+  render();
+}
+
+function renderToday(){
+  const now=new Date(),k=keyOf(now),d=days[k],c=calc(d),st=c.state;
+  $('clock').textContent=hm(now);
+  $('today').textContent=now.toLocaleDateString(t('loc'),{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const S={off:['sOff','s-off'],work:['sWork','s-work'],break:['sBreak','s-pause'],lunch:['sLunch','s-pause'],done:['sDone','s-off']}[st];
+  $('status').textContent=t(S[0]);$('status').className='pill '+S[1];
+  $('b-in').disabled=!(st==='off'||st==='done');
+  $('b-in').textContent=st==='done'?t('inAgain'):t('in');
+  $('b-break').disabled=st!=='work';$('b-lunch').disabled=st!=='work';
+  $('b-back').disabled=!(st==='break'||st==='lunch');
+  $('b-out').disabled=!(st==='work'||st==='break'||st==='lunch');
+  $('b-undo').disabled=!(d&&d.ev.length);
+  $('tl').innerHTML=d&&d.ev.length?sorted(d.ev).map(e=>`<li><span>${evName(e.t)}</span><span class="t">${e.at}</span></li>`).join(''):`<li class="empty">${t('none')}</li>`;
+  const nowM=toMin(hm(now)),evs=d?sorted(d.ev):[];
+  const taken=p=>evs.some(e=>e.t===p.t&&Math.abs(toMin(e.at)-toMin(p.at))<=60);
+  const al=$('alert');al.className='alert';al.textContent='';
+  if(st==='work'){
+    const p=PLAN.find(p=>nowM>=toMin(p.at)&&nowM<toMin(p.at)+p.min&&!taken(p));
+    if(p){al.textContent=p.t==='lunch'?t('timeLunch')(p.min):t('timeBreak')(p.min);al.className='alert on';
+      if(buzzed!==k+p.at){buzzed=k+p.at;notify(al.textContent)}}
+  }else if(st==='done'){al.textContent=t('dayDone')(fmtL(c.work));al.className='alert on info'
+  }else if(st==='break'||st==='lunch'){
+    const last=evs[evs.length-1],p=PLAN.find(p=>p.t===st&&Math.abs(toMin(last.at)-toMin(p.at))<=60);
+    const endM=toMin(last.at)+(p?p.min:DUR[st]),left=endM-nowM;
+    if(left>=0){al.textContent=t('backAt')(pad(Math.floor(endM/60)%24)+':'+pad(endM%60),left);al.className='alert on info'}
+    else{al.textContent=t('over')(-left);al.className='alert on';
+      if(buzzed!==k+'over'+last.at){buzzed=k+'over'+last.at;notify(al.textContent)}}
+  }
+  $('plan').innerHTML='<span>'+t('plan')+':</span>'+PLAN.map(p=>{const cls=taken(p)?'done':(nowM>=toMin(p.at)&&nowM<toMin(p.at)+p.min?'now':'');
+    return `<span class="${cls}">${p.at} ${p.t==='lunch'?t('evLunch'):t('evBreak')} ${p.min} ${t('min')}${taken(p)?' ✓':''}</span>`}).join('');
+  $('s-total').textContent=fmtL(c.work);$('s-presence').textContent=t('presence')(fmt(c.gross),fmt(c.brk+c.lunch));
+  $('s-work').textContent=fmt(c.work);$('s-break').textContent=fmt(c.brk);$('s-lunch').textContent=fmt(c.lunch);
+}
+function monthDays(){const m=$('month').value;return Object.values(days).filter(d=>d.date.startsWith(m)&&d.ev.length).sort((a,b)=>a.date<b.date?-1:1)}
+function renderMonth(){
+  const list=monthDays();let tot=0;
+  $('mbody').innerHTML=list.length?list.map(d=>{const c=calc(d);tot+=c.work;const dt=new Date(d.date+'T12:00');
+    return `<tr data-d="${d.date}"><td>${dt.toLocaleDateString(t('loc'),{weekday:'short',day:'2-digit',month:'2-digit'})}</td><td class="num">${c.start||'—'}</td><td class="num">${c.end||'—'}</td><td class="num hide-s">${fmt(c.brk)}</td><td class="num hide-s">${fmt(c.lunch)}</td><td class="num"><b>${fmt(c.work)}</b></td></tr>`}).join('')
+    :`<tr><td colspan="6" class="empty">${t('noneM')}</td></tr>`;
+  $('m-days').textContent=t('days')(list.length);$('m-total').textContent=fmt(tot);
+}
+function render(){renderToday();renderMonth()}
+
+/* day editor */
+let editing=null;
+function evRow(e){return `<div class="ev"><select aria-label="Typ">${['in','break','lunch','back','out'].map(k=>`<option value="${k}"${k===e.t?' selected':''}>${evName(k)}</option>`).join('')}</select><input type="time" value="${e.at}"><button class="small danger" data-x aria-label="x">✕</button></div>`}
+function openEditor(date){
+  editing=date;const d=days[date]||{ev:[],note:''};
+  $('d-date').value=date;$('d-evs').innerHTML=sorted(d.ev).map(evRow).join('');$('d-note').value=d.note||'';
+  $('d-del').dataset.sure='';$('d-del').textContent=t('delDay');
+  $('dlg').classList.add('on');
+}
+$('d-evs').addEventListener('click',e=>{if(e.target.closest('[data-x]'))e.target.closest('.ev').remove()});
+$('d-add').onclick=()=>{const n=$('d-evs').children.length;$('d-evs').insertAdjacentHTML('beforeend',evRow({t:n?'out':'in',at:n?'17:00':'08:00'}))};
+$('d-date').onchange=()=>{const v=$('d-date').value;if(v&&days[v]&&v!==editing)openEditor(v)};
+$('d-cancel').onclick=()=>$('dlg').classList.remove('on');
+$('d-save').onclick=()=>{
+  const date=$('d-date').value;if(!date){toast(t('pickDate'));return}
+  const ev=[...$('d-evs').children].map(r=>({t:r.querySelector('select').value,at:r.querySelector('input').value})).filter(e=>e.at);
+  if(editing&&editing!==date&&days[editing]){delete days[editing];persist(editing)}
+  if(ev.length){days[date]={date,ev,note:$('d-note').value.trim(),updated:Date.now()}}else delete days[date];
+  persist(date);$('dlg').classList.remove('on');render();toast(t('saved'));
+};
+$('d-del').onclick=()=>{
+  const b=$('d-del');if(b.dataset.sure!=='1'){b.dataset.sure='1';b.textContent=t('sure');return}
+  b.dataset.sure='';const date=editing;delete days[date];persist(date);$('dlg').classList.remove('on');render();toast(t('deleted'));
+};
+
+/* excel: bilingual German / English */
+function saveFile(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}
+async function exportXlsx(){
+  if(!window.XLSX){toast(t('noLib'));return}
+  const list=monthDays();if(!list.length){toast(t('noData'));return}
+  const m=$('month').value,mid=new Date(m+'-15');
+  const monthName=mid.toLocaleDateString('de-DE',{month:'long',year:'numeric'})+' / '+mid.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+  const H=['Datum / Date','Wochentag / Weekday','Arbeitsbeginn / Start','Pausen / Breaks','Pause Min. / Break min','Mittagspause / Lunch','Mittag Min. / Lunch min','Arbeitsende / End','Anwesenheit / Time at work','Netto h:mm / Net h:mm','Netto Std. / Net hours','Bemerkung / Note'];
+  const rows=[['Arbeitszeitnachweis / Monthly Timesheet'],['Mitarbeiter / Employee',$('name').value||''],['Monat / Month',monthName],[],H];
+  let tot=0,tb=0,tl=0,tg=0;
+  for(const d of list){const c=calc(d);tot+=c.work;tb+=c.brk;tl+=c.lunch;tg+=c.gross;const dt=new Date(d.date+'T12:00');
+    rows.push([dt.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'}),dt.toLocaleDateString('de-DE',{weekday:'short'})+' / '+dt.toLocaleDateString('en-GB',{weekday:'short'}),c.start,c.breaks.join(', '),c.brk,c.lunches.join(', '),c.lunch,c.end,fmt(c.gross),fmt(c.work),Math.round(c.work/60*100)/100,d.note||''])}
+  rows.push([],['Summe / Total','Arbeitstage / Days: '+list.length,'','',tb,'',tl,'',fmt(tg),fmt(tot),Math.round(tot/60*100)/100,'']);
+  rows.push([],[],['Unterschrift Mitarbeiter / Employee signature','','','','Unterschrift Vorgesetzter / Supervisor signature']);
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[14,16,14,24,12,18,12,14,16,14,13,26].map(w=>({wch:w}));
+  ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:4}}];
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Arbeitszeit - Timesheet');
+  const buf=XLSX.write(wb,{bookType:'xlsx',type:'array'});
+  const fname=($('name').value||'Timesheet').replace(/\s+/g,'_')+'_Arbeitszeit_'+m+'.xlsx';
+  saveFile(fname,new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));toast(t('fileOk'))
+}
+
+/* wiring */
+$('b-in').onclick=()=>punch('in');$('b-break').onclick=()=>punch('break');$('b-lunch').onclick=()=>punch('lunch');
+$('b-back').onclick=()=>punch('back');$('b-out').onclick=()=>punch('out');
+$('b-undo').onclick=()=>{const k=keyOf(new Date()),d=days[k];if(!d||!d.ev.length)return;
+  const last=sorted(d.ev).pop();d.ev.splice(d.ev.indexOf(last),1);d.updated=Date.now();if(!d.ev.length)delete days[k];persist(k);render();toast(t('undone'))};
+$('b-edit-today').onclick=()=>openEditor(keyOf(new Date()));
+$('b-addday').onclick=()=>openEditor(keyOf(new Date()));
+$('mbody').addEventListener('click',e=>{const tr=e.target.closest('tr[data-d]');if(tr)openEditor(tr.dataset.d)});
+$('month').onchange=renderMonth;
+$('name').oninput=()=>{meta.name=$('name').value;saveLocal()};
+document.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{meta.ui=b.dataset.l;saveLocal();applyLang()});
+$('b-xlsx').onclick=exportXlsx;
+
+loadLocal();
+const n=new Date();$('month').value=n.getFullYear()+'-'+pad(n.getMonth()+1);
+$('name').value=meta.name||'';
+applyLang();setInterval(renderToday,10000);
+
+$('b-backup').onclick=()=>{saveFile('Arbeitszeit_Backup_'+keyOf(new Date())+'.json',new Blob([JSON.stringify({days,meta},null,1)],{type:'application/json'}));toast(t('fileOk'))};
+$('f-restore').onchange=async e=>{const f=e.target.files[0];if(!f)return;
+  try{const o=JSON.parse(await f.text());if(!o.days)throw 0;
+    for(const d of Object.values(o.days)){const l=days[d.date];if(!l||(d.updated||0)>=(l.updated||0))days[d.date]=d}
+    saveLocal();render();toast(t('restored'))}catch(err){toast(t('badFile'))}e.target.value=''};
+function notifLabel(){const b=$('b-notif');if(!('Notification' in window)){b.style.display='none';return}
+  b.textContent=Notification.permission==='granted'?t('notifOk'):Notification.permission==='denied'?t('notifNo'):t('notifOn')}
+$('b-notif').onclick=async()=>{try{await Notification.requestPermission()}catch(e){}notifLabel()};
+document.querySelectorAll('[data-l]').forEach(b=>b.addEventListener('click',notifLabel));
+notifLabel();
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(r=>{swReg=r}).catch(()=>{})}
+setSync('local');
+}
+</script>
+</body>
+</html>
