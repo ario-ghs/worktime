@@ -104,6 +104,8 @@ tr.wk td{font-weight:800;background:var(--accSoft);font-size:13px}
 <div class="toast" id="toast" role="status"></div>
 
 <script src="xlsx.min.js"></script>
+<script src="jspdf.umd.min.js"></script>
+<script src="jspdf.plugin.autotable.min.js"></script>
 <script>
 {
 const $=id=>document.getElementById(id);
@@ -364,9 +366,11 @@ function renderMonth(){
   <section class="card">
     <h2>${T('Export & Senden','Export & send')}</h2>
     <div class="row">
-      <button class="small primary" data-act="share">${T('An Vorgesetzten senden','Send to supervisor')}</button>
+      <button class="small primary" data-act="share">${T('PDF an Vorgesetzten senden','Send PDF to supervisor')}</button>
       <button class="small dark" data-act="xlsx">${T('Excel herunterladen','Download Excel')}</button>
+      <button class="small" data-act="pdf">${T('PDF herunterladen','Download PDF')}</button>
     </div>
+    <p class="note">${T('Android erlaubt Web-Apps nur PDF-Dateien direkt zu teilen. Die Excel-Datei landet im Ordner „Downloads“ und kann von dort im E-Mail- oder WhatsApp-Anhang ausgewählt werden.','Android only lets web apps share PDF files directly. The Excel file is saved to "Downloads" and can be attached from there in email or WhatsApp.')}</p>
     <h3>${T('Sicherung','Backup')}</h3>
     <div class="row">
       <button class="small" data-act="backup">${T('Sicherung speichern','Save backup')}</button>
@@ -567,11 +571,64 @@ function postProcess(buf){
   ct.content=enc(cx);ct.size=ct.content.length;
   return XLSX.CFB.write(z,{type:'array',fileType:'zip'});
 }
+/* ---------- pdf (shareable on Android; Excel files cannot be shared from a web app) ---------- */
+function buildPdf(){
+  if(!window.jspdf){toast(T('PDF-Bibliothek nicht geladen','PDF library not loaded'));return null}
+  const {jsPDF}=window.jspdf,doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const p=P(),m=month,s=monthStats(m),mid=parseKey(m+'-15'),W=297;
+  const monthName=mid.toLocaleDateString('de-DE',{month:'long',year:'numeric'})+' / '+mid.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+  const ink=[20,18,16],acc=[38,146,130],mute=[107,101,93],red=[179,38,30],green=[31,107,58];
+  doc.setFillColor(22,25,26);doc.rect(0,0,W,20,'F');doc.setFillColor(...acc);doc.rect(0,20,W,1,'F');
+  try{doc.addImage(LOGO,'PNG',10,3.5,32,13)}catch(e){}
+  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(16);doc.text('Arbeitszeitnachweis / Monthly Timesheet',50,12.5);
+  const left=[['Mitarbeiter / Employee',fullName(p)],['Personalnr. / Employee no.',p.empNo],['Position / Abteilung',[p.position,p.dept].filter(Boolean).join(' · ')],['Vertrag / Contract',CONTRACTS[p.contract][0]+' / '+CONTRACTS[p.contract][1]+' · '+p.weekly+' Std./Woche'],['Vorgesetzte/r / Supervisor',p.supervisor],['Monat / Month',monthName]];
+  const right=[['Soll / Target',fmt(s.soll)],['Ist / Actual',fmt(s.ist)],['Differenz / Difference',fmtS(s.diff)],['Überstunden-Saldo / Overtime balance',fmtS(s.bal)],['Urlaub Monat · Rest Jahr / Vacation month · left',s.vac+' · '+s.vacLeft],['Krankheitstage / Sick days',String(s.sick)]];
+  doc.setFontSize(8.5);
+  left.forEach(([a,b],i)=>{const y=27+i*3.9;doc.setFont('helvetica','bold');doc.setTextColor(...mute);doc.text(a,10,y);doc.setTextColor(...ink);doc.setFontSize(9);doc.text(String(b||''),55,y);doc.setFontSize(8.5)});
+  right.forEach(([a,b],i)=>{const y=27+i*3.9;doc.setFont('helvetica','bold');doc.setTextColor(...mute);doc.text(a,180,y);doc.setFontSize(9);doc.setTextColor(...((i===2||i===3)?(b.startsWith('-')?red:green):ink));doc.text(b,W-10,y,{align:'right'});doc.setFontSize(8.5)});
+  const head=[['Datum\nDate','Tag\nDay','Art\nType','Beginn\nStart','Pausen\nBreaks','Mittag\nLunch','Ende\nEnd','Pausen ges.\nTot. breaks','Anwesenheit\nAt work','Soll\nTarget','Ist\nActual','+/-','Bemerkung\nNote']];
+  const body=[],meta=[];let wk=null,a={soll:0,ist:0,gross:0,brk:0};
+  const flush=()=>{if(wk===null||(!a.soll&&!a.ist&&!a.gross))return;const d=a.ist-a.soll;
+    body.push([{content:'KW / Week '+wk,colSpan:7},fmt(a.brk),fmt(a.gross),fmt(a.soll),fmt(a.ist),fmtS(d),'']);meta.push({week:true,neg:d<0})};
+  for(const x of s.rows){
+    const w=isoWeek(x.k);if(w!==wk){flush();wk=w;a={soll:0,ist:0,gross:0,brk:0}}
+    if(x.counted){a.soll+=x.target;a.ist+=x.ist}if(x.type==='work'){a.gross+=x.c.gross;a.brk+=x.c.brk+x.c.lunch}
+    const dt=parseKey(x.k),isW=x.type==='work',show=x.counted&&(x.type||x.missing||x.target);
+    body.push([dt.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'}),dt.toLocaleDateString('de-DE',{weekday:'short'})+' / '+dt.toLocaleDateString('en-GB',{weekday:'short'}),
+      x.missing?'fehlt / missing':x.type?TYPES[x.type][0]+' / '+TYPES[x.type][1]:'',isW?x.c.start:'',isW?x.c.breaks.join(', '):'',isW?x.c.lunches.join(', '):'',isW?x.c.end:'',
+      isW&&(x.c.brk+x.c.lunch)?fmt(x.c.brk+x.c.lunch):'',isW?fmt(x.c.gross):'',x.target?fmt(x.target):'',x.type||x.missing?fmt(x.ist):'',show?fmtS(x.diff):'',
+      [x.hol&&x.type!=='work'?x.hol:'',x.note].filter(Boolean).join(' · ')]);
+    meta.push({we:!x.wd,miss:x.missing,neg:x.diff<0});
+  }
+  flush();
+  const foot=[[{content:'Summe / Total',colSpan:2},{content:s.work+' Arbeitstage / workdays',colSpan:5},fmt(s.brk),fmt(s.gross),fmt(s.soll),fmt(s.ist),fmtS(s.diff),'']];
+  doc.autoTable({head,body,foot,startY:50,theme:'grid',margin:{left:10,right:10,bottom:14},
+    showFoot:'lastPage',showHead:'everyPage',
+    styles:{font:'helvetica',fontSize:6.6,cellPadding:{top:.4,bottom:.4,left:1,right:1},halign:'center',valign:'middle',lineColor:[201,195,186],lineWidth:.15,textColor:ink},
+    headStyles:{fillColor:ink,textColor:255,fontStyle:'bold',fontSize:6.6},footStyles:{fillColor:[231,228,223],textColor:ink,fontStyle:'bold',fontSize:8.5},
+    columnStyles:{4:{halign:'left',cellWidth:34},12:{halign:'left',cellWidth:38},10:{fontStyle:'bold'},11:{fontStyle:'bold'}},
+    didParseCell:h=>{if(h.section==='foot'){if(h.column.index===11)h.cell.styles.textColor=s.diff<0?red:green;if(h.column.index===10)h.cell.styles.textColor=acc;if(h.column.index===0)h.cell.styles.halign='left';return}
+      if(h.section!=='body')return;const mt=meta[h.row.index];if(!mt)return;
+      if(mt.week){h.cell.styles.fillColor=[220,239,235];h.cell.styles.fontStyle='bold';if(h.column.index===0)h.cell.styles.halign='left'}
+      else if(mt.we){h.cell.styles.fillColor=[237,234,229];h.cell.styles.textColor=mute}
+      else if(h.row.index%2)h.cell.styles.fillColor=[246,244,241];
+      if(mt.miss&&h.column.index===2){h.cell.styles.textColor=red;h.cell.styles.fontStyle='bold'}
+      if(h.column.index===11&&h.cell.raw)h.cell.styles.textColor=mt.neg?red:green},
+    didDrawPage:()=>{doc.setFontSize(7);doc.setTextColor(...mute);doc.text('Erstellt mit / Created with Arbeitszeit · Work time – '+new Date().toLocaleDateString('de-DE')+' · Feiertage / Holidays: '+STATES[p.state],10,203);doc.text(String(doc.internal.getNumberOfPages()),W-10,203,{align:'right'})}});
+  let y=doc.lastAutoTable.finalY+12;if(y>197){doc.addPage();y=30}
+  doc.setDrawColor(...ink);doc.setLineWidth(.3);doc.line(10,y,120,y);doc.line(177,y,W-10,y);
+  doc.setFontSize(7.5);doc.setTextColor(...mute);doc.setFont('helvetica','normal');
+  doc.text('Datum, Unterschrift Mitarbeiter / Date, employee signature',10,y+4);doc.text('Datum, Unterschrift Vorgesetzte/r / Date, supervisor signature',177,y+4);
+  const fname=(fullName(p).replace(/\s+/g,'_')||'Mitarbeiter')+'_Arbeitszeit_'+m+'.pdf';
+  return new File([doc.output('arraybuffer')],fname,{type:'application/pdf'});
+}
 async function share(){
-  const f=buildXlsx();if(!f)return;const p=P();
-  const text=T('Arbeitszeitnachweis ','Timesheet ')+month+' – '+fullName(p);
-  try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:text,text});return}}catch(e){if(e&&e.name==='AbortError')return}
-  saveFile(f.name,f);toast(T('Teilen nicht möglich – Datei wurde heruntergeladen','Sharing not available – file downloaded'));
+  const f=buildPdf();if(!f)return;const p=P(),s=monthStats(month);
+  const title=T('Arbeitszeitnachweis ','Timesheet ')+month+' – '+fullName(p);
+  const text=title+'\n'+T('Ist','Actual')+': '+fmt(s.ist)+' · '+T('Soll','Target')+': '+fmt(s.soll)+' · '+T('Differenz','Difference')+': '+fmtS(s.diff);
+  try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title,text});return}}
+  catch(e){if(e&&e.name==='AbortError')return}
+  saveFile(f.name,f);toast(T('Teilen nicht möglich – PDF wurde heruntergeladen','Sharing not available – PDF downloaded'));
 }
 
 /* ---------- onboarding ---------- */
@@ -599,6 +656,7 @@ document.addEventListener('click',e=>{
   else if(act==='backup')backup();
   else if(act==='xlsx'){const f=buildXlsx();if(f){saveFile(f.name,f);toast(T('Datei gespeichert','File saved'))}}
   else if(act==='share')share();
+  else if(act==='pdf'){const f=buildPdf();if(f){saveFile(f.name,f);toast(T('Datei gespeichert','File saved'))}}
   else if(act==='nophoto'){P().photo='';save();render()}
   else if(act==='planadd'){P().plan.push({at:'16:00',t:'break',min:15});save();renderProfile()}
   else if(act==='plandel'){P().plan.splice(+a.dataset.i,1);save();renderProfile()}
